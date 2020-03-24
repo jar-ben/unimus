@@ -10,15 +10,7 @@ Master::Master(string filename, string alg, string ssolver){
         isValidExecutions = 0;
 	algorithm = alg;
 	sat_solver = ssolver;
-	if(ends_with(filename, "smt2")){
-		#ifdef NOSMT
-			print_err("Working with SMT is currently not enabled. To enable it, run 'make cleanCore; make USESMT=YES'. For more info, see README.md.");
-		#else
-		satSolver = new Z3Handle(filename);
-	       	#endif	
-		domain = "smt";
-	}
-	else if(ends_with(filename, "cnf")){
+	if(ends_with(filename, "cnf")){
 		cout << "solver: " << sat_solver << endl;
 		if(sat_solver == "glucose"){
 			satSolver = new GlucoseHandle(filename);
@@ -29,19 +21,8 @@ Master::Master(string filename, string alg, string ssolver){
 		}
 		domain = "sat";
 	}
-	else if(ends_with(filename, "ltl")){
-		#ifdef NOLTL
-			print_err("Working with LTL is currently not enabled. To enable it, run 'make cleanCore; make USELTL=YES'. For more info, see README.md.");
-		#else
-		if(sat_solver == "nuxmv")
-			satSolver = new NuxmvHandle(filename); 
-		else
-			satSolver = new SpotHandle(filename);
-		#endif
-		domain = "ltl";
-	}
 	else
-		print_err("The input file has to have one of these extensions: .smt2, .ltl, or .cnf. See example files in ./examples/ folder.");
+		print_err("The input file has to have one of these extensions: .cnf. See example files in ./examples/ folder.");
 	dimension = satSolver->dimension;	
 	cout << "Number of constraints in the input set:" << dimension << endl;
         explorer = new Explorer(dimension);	
@@ -62,7 +43,6 @@ Master::Master(string filename, string alg, string ssolver){
 	uni = Formula(dimension, false);
 	couni = Formula(dimension, true);
 	unimus_rotated = unimus_attempts = 0;
-	unimus_use_stack = true;
 	critical_extension_saves = 0;
 	unimus_refines = 0;
 	satSolver->explorer = explorer;
@@ -543,10 +523,7 @@ void Master::mark_MUS(MUS& f, bool block_unex){
 	cout << ", seed dimension: " << f.seed_dimension << ", shrink duration: " << f.duration;
 	cout << ", shrinks: " << satSolver->shrinks << ", unimus rotated: " << unimus_rotated << ", unimus attempts: " << unimus_attempts;
 	cout << ", bit: " << bit;
-	if(unimus_use_stack)
-		cout << ", stack size: " << unimus_rotation_stack.size();
-	else
-		cout << ", queue size: " << unimus_rotation_queue.size();
+	cout << ", stack size: " << unimus_rotation_stack.size();
 	
 	cout << ", critical_extension_saves: " << critical_extension_saves;
 	cout << ", unimus_refines: " << unimus_refines;
@@ -556,8 +533,6 @@ void Master::mark_MUS(MUS& f, bool block_unex){
 
 	if(output_file != "")
 		write_mus_to_file(f);
-
-	unimus_map.push_back(unordered_map<int, std::vector<int>>());
 }
 
 void Master::enumerate(){
@@ -577,9 +552,6 @@ void Master::enumerate(){
 		marco_base();
 	}
 	else if(algorithm == "unimus"){
-		unimus();
-	}
-	else if(algorithm == "unimusRec"){
 		unimusRecMain();
 	}
 	return;

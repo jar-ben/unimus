@@ -5,13 +5,6 @@
 #include "satSolvers/GlucoseHandle.h"
 #include "satSolvers/CadicalHandle.h"
 #include "Explorer.h"
-#ifndef NOSMT
-	#include "satSolvers/Z3Handle.h"
-#endif
-#ifndef NOLTL 
-	#include "satSolvers/SpotHandle.h"
-	#include "satSolvers/NuxmvHandle.h"
-#endif
 #include "types_h.h"
 #include <set>
 #include <list>
@@ -97,28 +90,13 @@ public:
 	void find_all_muses_duality_based_remus(Formula subset, Formula crits, int depth);
 	void extend_mus(Formula &top, Formula &mus);
 
-	//unimus
-	void unimus();
-	void unimus_rotate_mus(int mid, int limit);
-	vector<vector<pair<int,int>>> unimus_hitmap_pos;
-	vector<vector<pair<int,int>>> unimus_hitmap_neg;
-	void unimus_mark_mus(MUS &m);
-	std::queue<int> unimus_rotation_queue;
+	//unimusRec algorithm functions
+	int mssRotationLimit;
+	int unimus_refines;
+	int critical_extension_saves;
 	std::stack<int> unimus_rotation_stack;
 	int unimus_rotated;
 	int unimus_attempts;
-	bool unimus_hitting_pair(int mid1, int mid2, int c1, int c2);
-	std::vector<unordered_map<int, std::vector<int>>> unimus_map;
-	void unimus_add_blocks(MUS &m1, int from, int to, vector<vector<int>> &blocks);
-	vector<int> unimus_get_implied(int mid, int c);
-	void unimus_refine();
-	bool unimus_use_stack;
-	int critical_extension_saves;
-	int unimus_refines;
-	int mssRotationLimit;
-
-
-	//unimusRec
 	void unimusRecMain();
 	bool unimusRecRefine();
 	void unimusRec(Formula subset, Formula crits, int depth);

@@ -28,17 +28,17 @@ domain = "sat"
 filesDict = {}
 filesDict["sat"] = '/home/xbendik/mustool/Formulae/all/*.cnf'
 filesDict["smt"] = '../benchmarks/smt/intractable/*.smt2'
-filesDict["sat"] = '/home/xbendik/newmus/mustool/benchmakrs/selected_intractable/*.cnf'
+#filesDict["sat"] = '/home/xbendik/newmus/mustool/benchmakrs/selected_intractable/*.cnf'
 
 ## Choose an algorithm to used. Options are "remus", "marco", "tome". The first one, "remus", is what we have used in our experiments. 
-algorithm = "unimusRec"
+algorithm = "unimus"
 
 ## If you want to process just part of the benchmarks, modify the variables ss and ee. There are 291 and 184 benchmarks in the SAT and SMT domains, respectively.
 ## ss defines the index of the first benchmark to be used, and ee the index of the last index of the benchmark to be used. 
 ## if you set ss to 0 and ee to 291 and you work with the SAT domain, all benchmarks will be processed. If you set ss to 50 and ee to 110, only 60 benchmarks in this range will be processed. 
 ## Therefore, set the range based on the constraint domain and based on the number of benchmarks that you want to evaluate.
 ss = 0
-ee = 250
+ee = 292
 #ee = 113 
 
 ## this is a partial name of files that will contain results of the experiments. 
@@ -49,7 +49,7 @@ ee = 250
 ## 	 "sumup_results_{}_t{}_v{}_{}.data".format(domain, timeout, algorithm, name) 
 ## the files will be stored in this directory (./mustool_release/mustool)
 
-name = "p5_criticalFix_selected"
+name = ""
 
 
 ######################################

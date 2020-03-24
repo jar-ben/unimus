@@ -26,13 +26,6 @@ MCSMUS_SRCS = $(wildcard $(MCSMUS)/minisat/core/*.cc) $(wildcard $(MCSMUS)/minis
 		$(wildcard $(MCSMUS)/mcsmus/*.cc)
 MCSMUS_OBJS = $(filter-out %Main.o, $(MCSMUS_SRCS:.cc=.o))
 
-### 
-# The following 3 variables control whether a support for individual constraint domains, SAT, SMT, LTL, should be build. 
-USESAT = YES
-USESMT = NO
-USELTL = NO
-###
-
 USEMCSMUS = YES
 
 CXX	= g++
@@ -44,26 +37,6 @@ ifeq ($(USEMCSMUS),YES)
 	CFLAGS += -D UMCSMUS
 else
 	MCSMUS_OBJS = 
-endif
-
-ifeq ($(USESAT),NO)
-	CFLAGS += -D NOSAT
-endif
-ifeq ($(USESMT),NO)
-	CFLAGS += -D NOSMT
-	CSRCS := $(filter-out $(DIR)/satSolvers/Z3Handle.cpp, $(CSRCS))
-	COBJS := $(filter-out $(DIR)/satSolvers/Z3Handle.o, $(COBJS))
-else
-	LIBS   += -lz3
-endif
-ifeq ($(USELTL),NO)
-	CFLAGS += -D NOLTL
-	CSRCS := $(filter-out $(DIR)/satSolvers/SpotHandle.cpp, $(CSRCS))
-	COBJS := $(filter-out $(DIR)/satSolvers/SpotHandle.o, $(COBJS))
-	COBJS := $(filter-out $(DIR)/satSolvers/NuxmvHandle.o, $(COBJS))
-	COBJS := $(filter-out $(DIR)/satSolvers/NuxmvHandle.cpp, $(COBJS))
-else
-	LIBS    += -lspot
 endif
 
 must: $(COBJS) $(MCOBJS) $(MCSMUS_OBJS) $(GLOBJS)

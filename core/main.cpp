@@ -19,8 +19,8 @@ int main(int argc, char *argv[]){
 	std::signal(SIGTERM, signal_handler);
 
 	try{
-		TCLAP::CmdLine cmd("domain agnostic MUS enumeration Tool (MUST), Jaroslav Bendik, 2019.", ' ', "");
-		vector<string> allowedAlgs {"unimusRec", "remus", "tome", "marco", "comarco", "duremus", "unibase", "unibase2", "unimus", "counimus", "unimus2"};
+		TCLAP::CmdLine cmd("SAT MUS enumeration Tool, Jaroslav Bendik, 2020.", ' ', "");
+		vector<string> allowedAlgs {"unimus", "remus", "tome", "marco"};
 		TCLAP::ValuesConstraint<string> allowedVals(allowedAlgs);
 		TCLAP::ValueArg<string> algorithm("a","algorithm","MUS enumeration algorithm to be used.",false,"remus",&allowedVals);
 		cmd.add(algorithm);
@@ -43,12 +43,12 @@ int main(int argc, char *argv[]){
 		TCLAP::SwitchArg shrinkMining("","shrink-mining","Allows mcsmus to mine critical clauses from Explorer.", cmd, false);
 		vector<string> allowedShrinks {"default", "muser", "custom", "extension"};
 		TCLAP::ValuesConstraint<string> allowedValsShrink(allowedShrinks);
-		TCLAP::ValueArg<std::string> shrink("s","shrink","Specifies the shrinking algorithm (single MUS extraction subroutine). In the SMT and LTL domain, only the default one is supported. In SAT domain, you can opt between default (implemented as mcsmus) and muser.",false,"default",&allowedValsShrink);
+		TCLAP::ValueArg<std::string> shrink("s","shrink","Specifies the shrinking algorithm (single MUS extraction subroutine). The default is implemented via mcsmus",false,"default",&allowedValsShrink);
 		cmd.add(shrink);
 		
 		vector<string> allowedGrows {"default", "cmp", "uwr", "combined", "mcsls", "fixpoint"};
 		TCLAP::ValuesConstraint<string> allowedValsGrow(allowedGrows);
-		TCLAP::ValueArg<std::string> grow("","grow","Specifies the growing algorithm (single MSS/MCS extraction subroutine). In the SMT and LTL domain, only the default one is supported. In SAT domain, you can opt between default (naive) and cmp.",false,"default",&allowedValsGrow);
+		TCLAP::ValueArg<std::string> grow("","grow","Specifies the growing algorithm (single MSS/MCS extraction subroutine).",false,"default",&allowedValsGrow);
 		cmd.add(grow);
 
 		TCLAP::ValueArg<int> cmpStrategy("","cmp-strategy","CMP grow strategy.",false,1,"1,2,3 or 4");
@@ -64,9 +64,9 @@ int main(int argc, char *argv[]){
 		TCLAP::SwitchArg verify("c","verify-muses","Used for testing purposes. Verify that the outputted MUSes are indeed MUSes.", cmd, false);
 		TCLAP::SwitchArg getImplied("g","get-implied","Based on already found correction sets (satisfiable subsets), determines some critical constraints of seeds before shrinking and thus may speed up (or even completely avoid) the shrinking. Use this flag to disable it (not recommended).", cmd, true);
 
-		TCLAP::SwitchArg criticalsRotation("","criticals-rotation","Available only in the SAT domain and used only if the flag -g is not set. Allows to find additional critical constraints based on the already found ones. Use this flag to turn the feature on.", cmd, false);
+		TCLAP::SwitchArg criticalsRotation("","criticals-rotation","Can be used only if the flag -g is not set. Allows to find additional critical constraints based on the already found ones. Use this flag to turn the feature on.", cmd, false);
 
-		TCLAP::UnlabeledValueArg<string>  input( "input_file", "Input file, either .cnf, .smt2, or .ltl. See the ./examples/.", true, "", "input_file"  );
+		TCLAP::UnlabeledValueArg<string>  input( "input_file", "Input file with the extension .cnf and in DIMACS format. See the ./examples/.", true, "", "input_file"  );
 		cmd.add(input);
 		cmd.parse(argc, argv);
 

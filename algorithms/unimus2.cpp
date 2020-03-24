@@ -308,7 +308,6 @@ bool Master::unimusRecRefine(){
                 Formula origin_top = seed;
 		if(!is_valid(seed, true, false)){
                         MUS mus = shrink_formula(seed);
-                        //unimus_mark_mus(mus);
                         mark_MUS(mus);
 				unimusRec_mark_mus(mus, origin_top, origin_top);
                         foundMUS++;
