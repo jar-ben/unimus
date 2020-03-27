@@ -39,7 +39,7 @@ else
 	MCSMUS_OBJS = 
 endif
 
-must: $(COBJS) $(MCOBJS) $(MCSMUS_OBJS) $(GLOBJS)
+unimus: $(COBJS) $(MCOBJS) $(MCSMUS_OBJS) $(GLOBJS)
 	@echo Linking: $@
 	$(CXX) -o $@ $(COBJS) $(MCOBJS) $(MCSMUS_OBJS) $(GLOBJS) $(CFLAGS) $(INC) $(LIBD) $(LIBS) 
 
