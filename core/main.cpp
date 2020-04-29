@@ -20,9 +20,9 @@ int main(int argc, char *argv[]){
 
 	try{
 		TCLAP::CmdLine cmd("SAT MUS enumeration Tool, Jaroslav Bendik, 2020.", ' ', "");
-		vector<string> allowedAlgs {"unimus", "remus", "tome", "marco"};
+		vector<string> allowedAlgs {"unimus", "remus", "tome", "marco", "manthan"};
 		TCLAP::ValuesConstraint<string> allowedVals(allowedAlgs);
-		TCLAP::ValueArg<string> algorithm("a","algorithm","MUS enumeration algorithm to be used.",false,"unimus",&allowedVals);
+		TCLAP::ValueArg<string> algorithm("a","algorithm","MUS enumeration algorithm to be used.",false,"manthan",&allowedVals);
 		cmd.add(algorithm);
 
 		vector<string> allowedSolvers {"minisat", "glucose", "cadical", "default"};

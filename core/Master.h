@@ -121,5 +121,8 @@ public:
 
 	//MARCO algorithm functions
 	void marco_base();
+
+	void manthan_base();
+	Formula manthan_shrink();
 };
 #endif

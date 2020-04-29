@@ -72,10 +72,8 @@ bool BooleanSolver::parse(string path){
 			if(pom == "clisty") listy = mainVar;
 			if(pom == "Yvar"){ 
 				yVars.push_back(abs(mainVar));
-				int dependsOn; // number of variables y depends on
-				int dependents; // number of variables that depend on y
 				is >> yVarsDependsOn[mainVar];
-				dependsOn >> yVarsDependents[mainVar];
+				is >> yVarsDependents[mainVar];
 			}
 		}
                 else if(line[0] == 'c')

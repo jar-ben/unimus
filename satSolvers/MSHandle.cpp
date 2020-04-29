@@ -84,12 +84,6 @@ bool MSHandle::solve(std::vector<bool> &controls, std::vector<int> conflicts, bo
 		}
 	}
 
-	//for(auto c: conflicts){
-	//	for(auto l: clauses[c]){
-	//		lits.push(itoLit(l)); 
-	//	}
-	//}
-
 	bool sat = solver->solve(lits);
 	if(sat && sat_improve){ // extract model extension		
 		int initSize = count_ones(controls);
@@ -115,9 +109,10 @@ bool MSHandle::solve(std::vector<bool> &controls, std::vector<int> conflicts, bo
 	}			
 	else if(!sat && unsat_improve){ // extract unsat core
 		vector<bool> core = vector<bool> (dimension, false);		
+		cout << "unsat, getting core " << endl;
 	        for (int i = 0 ; i < solver->conflict.size() ; i++) 
-			//if(var(solver->conflict[i]) - vars > 0 && var(solver->conflict[i]) - vars < dimension)
 				core[var(solver->conflict[i]) - vars] = true;
+		cout << "A " << count_ones(controls) << " " << count_ones(core) << endl; 
 		controls = core;		
 
 	}				

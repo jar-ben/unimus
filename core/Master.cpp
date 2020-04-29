@@ -593,6 +593,8 @@ void Master::enumerate(){
 	}
 	else if(algorithm == "unimus"){
 		unimusRecMain();
+	}else if(algorithm == "manthan"){
+		manthan_base();
 	}
 	return;
 }
