@@ -73,11 +73,15 @@ vector<vector<bool>> SatSolver::growMultiple(std::vector<bool> &f, std::vector<b
 	return mcses;
 }
 
-void SatSolver::exportMUS(std::vector<bool> mus, std::string outputFile){
+void SatSolver::exportMUS(std::vector<bool> mus, std::string outputFile, bool append){
 	exported_muses++;
 	ofstream file;
-	file.open(outputFile, std::ios_base::app);
-	file << "MUS #" << exported_muses << "\n";
+	if(append){
+		file.open(outputFile, std::ios_base::app);
+		file << "MUS #" << exported_muses << "\n";
+	}else{
+		file.open(outputFile);
+	}
 	file << toString(mus) << "\n";
 	file.close();
 }

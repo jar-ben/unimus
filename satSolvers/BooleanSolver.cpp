@@ -61,6 +61,23 @@ bool BooleanSolver::parse(string path){
                         is >> pom;      // cnf
                         is >> vars;     //number of variables
                 }
+		else if(starts_with(line, "c Xvar") or starts_with(line, "c Yvar") or starts_with(line, "c clistx") or starts_with(line, "c clisty")){
+			int mainVar;
+			istringstream is(line);
+			is >> pom;	// c
+			is >> pom;	// mainVar
+			is >> mainVar;	// mainVariable
+			if(pom == "Xvar") xVars.insert(abs(mainVar));
+			if(pom == "clistx") listx = mainVar;
+			if(pom == "clisty") listy = mainVar;
+			if(pom == "Yvar"){ 
+				yVars.push_back(abs(mainVar));
+				int dependsOn; // number of variables y depends on
+				int dependents; // number of variables that depend on y
+				is >> yVarsDependsOn[mainVar];
+				dependsOn >> yVarsDependents[mainVar];
+			}
+		}
                 else if(line[0] == 'c')
                         continue;
                 else if(clauses_unique_map.find(line) != clauses_unique_map.end()){

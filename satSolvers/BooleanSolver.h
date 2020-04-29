@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 #include <unordered_map>
+#include <set>
 
 class BooleanSolver: public SatSolver{
 public:
@@ -16,6 +17,12 @@ public:
 	std::vector<std::string> clauses_str;
 	std::unordered_map<std::string, int> clauses_unique_map;
 	std::map<std::vector<int>,int> clauses_map;
+	std::set<int> xVars;
+	std::vector<int> yVars;
+	std::unordered_map<int,int> yVarsDependsOn;
+	std::unordered_map<int,int> yVarsDependents;
+	int listx;
+	int listy;
 
 	bool parse(std::string filename);
 	void add_clause(std::vector<int> cl);

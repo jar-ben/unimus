@@ -48,6 +48,7 @@ Master::Master(string filename, string alg, string ssolver){
 	satSolver->explorer = explorer;
 	unex_unsat_time = unex_sat_time = total_shrink_time = 0;
 	total_shrinks = 0;
+	minimum_mus_value = 100000000;
 }
 
 Master::~Master(){
@@ -480,7 +481,7 @@ void Master::mark_MSS_executive(MSS f, bool block_unex){
 		cout << endl;
 	}
 
-	if(output_file != "")
+	if(output_file != "" && !minimum_mus)
 		write_mss_to_file(f);
 	if(mss_rotation)
 		rotation_queue.push_back(f.bool_mss);
@@ -531,8 +532,47 @@ void Master::mark_MUS(MUS& f, bool block_unex){
 	//cout << ", unimusRecDepth: " << unimusRecDepth;
 	cout << endl;
 
-	if(output_file != "")
-		write_mus_to_file(f);
+	if(output_file != ""){
+		if(minimum_mus){
+			BooleanSolver *msSolver = static_cast<BooleanSolver*>(satSolver);
+			set<int> yVars;
+			set<int> xVars;
+			set<int> allVars;
+			//collect the variables that appear in the MUS
+			for(auto c: f.int_mus){
+				for(auto l: msSolver->clauses[c]){
+					int var = (l > 0)? l: -l;
+					allVars.insert(var);
+					if(msSolver->xVars.find(var) != msSolver->xVars.end())
+						xVars.insert(var);
+					if(find(msSolver->yVars.begin(), msSolver->yVars.end(),var) != msSolver->yVars.end()){
+						yVars.insert(var);
+					}
+				}	
+			}
+
+			//compute the value of the MUS
+			int value = 0;
+			for(auto v: yVars)
+				value += (10 * msSolver->yVarsDependents[v]) + msSolver->yVarsDependsOn[v];
+
+			//minimize value
+			if(value < minimum_mus_value){
+				minimum_mus_value = value;
+				ofstream file;
+				file.open(output_file);	
+				for(auto var: allVars)
+					file << var << endl;
+				file.close();
+				//if(minimum_mus_value < msSolver->listy);
+				//	exit(0);
+			}
+			cout << "Y: " << minimum_mus_value << ", listy: " << msSolver->listy << ", value: " << value << endl;
+		}else{
+			write_mus_to_file(f);
+		}
+	}
+	//if(muses.size() > 100) exit(0);
 }
 
 void Master::enumerate(){

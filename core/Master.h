@@ -44,6 +44,9 @@ public:
 	float unex_sat_time;
 	float total_shrink_time;
 	int total_shrinks;
+	int minimum_mus_value;
+	bool minimum_mus;
+	int target_mus_score;
 
 	int guessed;
 	int rotated_msses;

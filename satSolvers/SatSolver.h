@@ -39,7 +39,7 @@ public:
 	virtual std::vector<bool> grow2(std::vector<bool> &f, std::vector<std::vector<bool>> &unsat, std::vector<bool> conflicts = std::vector<bool>());
 	virtual std::vector<bool> grow(std::vector<bool> &f, std::vector<bool> conflicts = std::vector<bool>());
 	virtual std::vector<std::vector<bool>> growMultiple(std::vector<bool> &f, std::vector<bool> conflicts = std::vector<bool>(), int limit = 1);
-	void exportMUS(std::vector<bool> mus, std::string outputFile);
+	void exportMUS(std::vector<bool> mus, std::string outputFile, bool append = true);
 	void exportMSS(std::vector<bool> mss, std::string outputFile);
 };
 

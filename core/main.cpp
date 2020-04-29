@@ -36,6 +36,9 @@ int main(int argc, char *argv[]){
 		TCLAP::ValueArg<std::string> mcslsArgs("","mcsls-args","",false,"","string");
 		cmd.add(mcslsArgs);
 
+		TCLAP::SwitchArg minimumMUS("","minimum-mus","", cmd, false);
+
+
 		TCLAP::SwitchArg conflictsNegation("","conflicts-negation","Negate known conflicting clauses during satsolver.solve() calls.", cmd, false);
 		TCLAP::SwitchArg mssRotation("","mss-rotation","Use mss-rotation technique", cmd, false);
 		TCLAP::SwitchArg verbose("v","verbose","Verbose output", cmd, false);
@@ -78,6 +81,7 @@ int main(int argc, char *argv[]){
 		}
 
 		Master solver(input.getValue(), algorithm.getValue(), satsolver.getValue());
+		solver.minimum_mus = minimumMUS.getValue();
 		solver.output_file = output.getValue();
 		solver.verbose = verbose.getValue();
 		solver.depthMUS = (recursionDepthLimit.getValue() >= 0)? recursionDepthLimit.getValue() : solver.dimension;
