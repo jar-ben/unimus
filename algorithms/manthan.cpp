@@ -127,10 +127,8 @@ Formula Master::manthan_shrink(){
 				if(var > msSolver->vars) break; //skip the activation variable
 				if(find(msSolver->yVars.begin(), msSolver->yVars.end(),var) == msSolver->yVars.end()) continue;
 				for(auto c2: parentMap[var]){
-					value[c2] -= 1;
-					if(msSolver->yVarsDependents.count(var) == 0) print_err("A failed");
-					if(msSolver->yVarsDependsOn.count(var) == 0) print_err("B failed");
 					value[c2] -= (10 * msSolver->yVarsDependents[var]) + msSolver->yVarsDependsOn[var];
+					if(value[c2] < 1) pool[c2] = false;
 				}
 			}
 		}else{
