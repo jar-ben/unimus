@@ -533,7 +533,7 @@ void Master::mark_MUS(MUS& f, bool block_unex){
 	cout << endl;
 
 	if(output_file != ""){
-		if(minimum_mus){
+		if(true || minimum_mus){
 			BooleanSolver *msSolver = static_cast<BooleanSolver*>(satSolver);
 			set<int> yVars;
 			set<int> xVars;
@@ -561,13 +561,12 @@ void Master::mark_MUS(MUS& f, bool block_unex){
 				minimum_mus_value = value;
 				ofstream file;
 				file.open(output_file);	
-				for(auto var: allVars)
+				for(auto var: yVars)
+					file << var << endl;
+				for(auto var: xVars)
 					file << var << endl;
 				file.close();
-				//if(minimum_mus_value < msSolver->listy);
-				//	exit(0);
 			}
-			cout << "Y: " << minimum_mus_value << ", listy: " << msSolver->listy << ", value: " << value << endl;
 		}else{
 			write_mus_to_file(f);
 		}
@@ -576,11 +575,7 @@ void Master::mark_MUS(MUS& f, bool block_unex){
 }
 
 void Master::enumerate(){
-	initial_time = chrono::high_resolution_clock::now();
 	cout << "running algorithm: " << algorithm << endl;
-	Formula whole(dimension, true);
-	if(is_valid(whole))
-		print_err("the input instance is satisfiable");
 
 	if(algorithm == "remus"){
 		find_all_muses_duality_based_remus(Formula (dimension, true), Formula (dimension, false), 0);

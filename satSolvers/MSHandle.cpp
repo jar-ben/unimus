@@ -109,10 +109,8 @@ bool MSHandle::solve(std::vector<bool> &controls, std::vector<int> conflicts, bo
 	}			
 	else if(!sat && unsat_improve){ // extract unsat core
 		vector<bool> core = vector<bool> (dimension, false);		
-		cout << "unsat, getting core " << endl;
 	        for (int i = 0 ; i < solver->conflict.size() ; i++) 
 				core[var(solver->conflict[i]) - vars] = true;
-		cout << "A " << count_ones(controls) << " " << count_ones(core) << endl; 
 		controls = core;		
 
 	}				

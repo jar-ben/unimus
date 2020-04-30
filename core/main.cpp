@@ -6,6 +6,7 @@
 #include <csignal>
 #include "tclap/CmdLine.h"
 #include "tclap/ValuesConstraint.h"
+#include <chrono>
 
 void signal_handler(int signal){
 	if(signal == 15){
@@ -15,7 +16,7 @@ void signal_handler(int signal){
 }
 
 int main(int argc, char *argv[]){
-
+	chrono::high_resolution_clock::time_point initial_time = chrono::high_resolution_clock::now();initial_time = chrono::high_resolution_clock::now();
 	std::signal(SIGTERM, signal_handler);
 
 	try{
@@ -81,6 +82,7 @@ int main(int argc, char *argv[]){
 		}
 
 		Master solver(input.getValue(), algorithm.getValue(), satsolver.getValue());
+		solver.initial_time = initial_time;
 		solver.minimum_mus = minimumMUS.getValue();
 		solver.output_file = output.getValue();
 		solver.verbose = verbose.getValue();
@@ -104,6 +106,9 @@ int main(int argc, char *argv[]){
 		
 		cout << "Enumeration completed" << endl;
 		cout << "Number of MUSes: " << solver.muses.size() << endl;
+		chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
+	        auto duration = chrono::duration_cast<chrono::microseconds>( now - initial_time ).count() / float(1000000);
+		cout << "Total time: " << duration << endl;
 
 	}catch (TCLAP::ArgException &e){
 		std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
