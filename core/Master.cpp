@@ -10,6 +10,8 @@ Master::Master(string filename, string alg, string ssolver){
         isValidExecutions = 0;
 	algorithm = alg;
 	sat_solver = ssolver;
+	chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
+
 	if(ends_with(filename, "cnf")){
 		cout << "solver: " << sat_solver << endl;
 		if(sat_solver == "glucose"){
@@ -23,6 +25,11 @@ Master::Master(string filename, string alg, string ssolver){
 	}
 	else
 		print_err("The input file has to have one of these extensions: .cnf. See example files in ./examples/ folder.");
+	
+	auto afterInit = chrono::high_resolution_clock::now();
+	auto duration = chrono::duration_cast<chrono::microseconds>( afterInit - now ).count() / float(1000000);
+	cout << "after satSolver init " << duration << endl;
+
 	dimension = satSolver->dimension;	
 	cout << "Number of constraints in the input set:" << dimension << endl;
         explorer = new Explorer(dimension);	

@@ -124,5 +124,6 @@ public:
 
 	void manthan_base();
 	Formula manthan_shrink();
+	int manthan_price(Formula f);
 };
 #endif
