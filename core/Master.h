@@ -123,7 +123,7 @@ public:
 	void marco_base();
 
 	void manthan_base();
-	Formula manthan_shrink();
+	Formula manthan_shrink(Formula top);
 	int manthan_price(Formula f);
 };
 #endif
