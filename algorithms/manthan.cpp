@@ -6,10 +6,49 @@
 #include <random>
 
 void Master::manthan_base(){
-	Formula mus = manthan_shrink();
+	BooleanSolver *msSolver = static_cast<BooleanSolver*>(satSolver);
+
+	vector<Formula> all_muses;
+	Formula top(dimension, true);
+	for(int i = 0; i < 1; i++){
+		Formula mus = manthan_shrink(top);
+		all_muses.push_back(mus);
+
+
+		int maxC = -1;
+		int maxV = 0;
+		for(int c = 0; c < dimension; c++){
+			if(!mus[c]) continue;
+			int price = 0;
+			for(auto l: msSolver->clauses[c]){
+				int var = abs(l);
+				if(find(msSolver->yVars.begin(), msSolver->yVars.end(),var) != msSolver->yVars.end())
+					price += (10 * msSolver->yVarsDependents[var]) + msSolver->yVarsDependsOn[var];
+			}
+			if(price > maxV){
+				maxV = price;
+				maxC = c;
+			}		
+		}
+		cout << "MUS price: "<< manthan_price(mus) << ", checks: " << msSolver->checks << ", max price: " << maxV << endl;
+		if(maxC == -1) break;
+		top[maxC] = false;
+		if(is_valid(top, false, false))
+			break;
+	}
+
+	
+	int min_price = 1000000;
+	Formula mus;
+	for(auto m: all_muses){
+		auto price = manthan_price(m);
+		if(price < min_price){
+			min_price = price;
+			mus = m;
+		}
+	}
 
 	//export variables that appear in the MUS
-	BooleanSolver *msSolver = static_cast<BooleanSolver*>(satSolver);
 	set<int> yVars;
 	set<int> xVars;
 	set<int> allVars;
@@ -109,9 +148,10 @@ void trim_core(int c, Formula &core, Formula &seed, Formula &base, vector<int> &
 }
 
 // preferences driven shrinking
-Formula Master::manthan_shrink(){
+Formula Master::manthan_shrink(Formula top){
+	vector<Formula> cores;
 	BooleanSolver *msSolver = static_cast<BooleanSolver*>(satSolver);
-	Formula seed(dimension, true);
+	Formula seed = top;
 	Formula base(dimension, false);
 	Formula pool(dimension, false);
 	vector<int> value(dimension, 0);
@@ -119,6 +159,7 @@ Formula Master::manthan_shrink(){
 	vector<vector<int>> parentMap(*max_element(msSolver->yVars.begin(), msSolver->yVars.end()) + 1, vector<int>());
 
 	for(int c = 0; c < dimension; c++){
+		if(!top[c]) continue;
 		auto item = make_pair(c,0);
 		for(auto l: msSolver->clauses[c]){
 			int var = abs(l);
@@ -134,7 +175,6 @@ Formula Master::manthan_shrink(){
 	}
 
 	Formula critical(dimension, false);
-	cout << "base: " << count_ones(base) << ", pool: " << count_ones(pool) << endl;
 
 	print_values(seed, value);
 
@@ -167,12 +207,22 @@ Formula Master::manthan_shrink(){
 			}
 			print_values(seed, value);
 		}else{
+			cores.push_back(core);
 			trim_core(c, core, seed, base, value, pool);
 		}
 		ones = count_ones(pool);
 	}
 
-	//just trim the hard clauses from the output
-	is_valid(seed, true, false);
-	return seed;
+	Formula finalCore;
+	int min_price = 1000000;
+	for(auto m: cores){
+		auto price = manthan_price(m);
+		if(price < min_price){
+			min_price = price;
+			finalCore = m;
+		}
+	}
+	
+
+	return finalCore;
 }
