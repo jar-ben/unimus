@@ -28,7 +28,7 @@ Master::Master(string filename, string alg, string ssolver){
 	
 	auto afterInit = chrono::high_resolution_clock::now();
 	auto duration = chrono::duration_cast<chrono::microseconds>( afterInit - now ).count() / float(1000000);
-	cout << "after satSolver init " << duration << endl;
+	cout << "Time spend by initialization " << duration << endl;
 
 	dimension = satSolver->dimension;	
 	cout << "Number of constraints in the input set:" << dimension << endl;

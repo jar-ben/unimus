@@ -6,13 +6,7 @@
 #include <random>
 
 void Master::manthan_base(){
-	chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();                                                                                       auto duration = chrono::duration_cast<chrono::microseconds>( now - initial_time ).count() / float(1000000);
-	cout << "start of manthan base " << duration << endl;
 	Formula mus = manthan_shrink();
-	now = chrono::high_resolution_clock::now();
-	duration = chrono::duration_cast<chrono::microseconds>( now - initial_time ).count() / float(1000000);
-	cout << "after shrink " << duration << endl;
-
 
 	//export variables that appear in the MUS
 	BooleanSolver *msSolver = static_cast<BooleanSolver*>(satSolver);
@@ -33,7 +27,6 @@ void Master::manthan_base(){
 	}
 	ofstream file;
 	file.open(output_file);
-	file << "price " << manthan_price(mus) << endl;
 	for(auto var: allVars)
 		file << var << endl;
 /*	for(auto var: yVars)
@@ -42,10 +35,7 @@ void Master::manthan_base(){
 		file << var << endl;
 */
 	file.close();
-
-	now = chrono::high_resolution_clock::now();
-	duration = chrono::duration_cast<chrono::microseconds>( now - initial_time ).count() / float(1000000);
-	cout << "after mark MUS" << duration << endl;
+	cout << "price: " << manthan_price(mus) << endl;
 	return;
 }
 
@@ -74,6 +64,49 @@ int Master::manthan_price(Formula f){
 	return price;
 }
 
+void print_values(vector<bool> &seed, vector<int> &values){
+	return;
+	vector<int> value_copy;
+	for(int i = 0; i < seed.size(); i ++){
+		if(seed[i]) value_copy.push_back(values[i]);
+	}
+	sort(value_copy.begin(), value_copy.end());
+	for(auto v: value_copy)
+		if(v > 0) cout << v << " ";
+	cout << endl << endl;
+}
+
+void trim_core2(int c, Formula &core, Formula &seed, Formula &base, vector<int> &value, Formula &pool){
+	bool useCore = true;
+	for(int i = 0; i < core.size(); i++){
+		if(core[i] && i != c && (value[i] * 2.2) > value[c]){
+			useCore = false;
+			break;
+		}
+	}
+	//if(useCore) seed = core;
+	for(int i = 0; i < core.size(); i++){
+		if(!seed[i]) pool[i] = false;
+		if(base[i]) seed[i] = true;
+	}
+}
+
+void trim_core(int c, Formula &core, Formula &seed, Formula &base, vector<int> &value, Formula &pool){
+	vector<pair<int,int>> pair_values;
+
+	for(int i = 0; i < core.size(); i++){
+		if(seed[i])
+			pair_values.push_back(make_pair(value[i],i));
+	}
+	sort(pair_values.rbegin(), pair_values.rend());
+	for(auto e: pair_values){
+		auto d = e.second;
+		if(!seed[d] || !pool[d]) continue;
+		//cout << "E:" << e.first << endl;
+		if(core[d]) break;
+		seed[d] = pool[d] = false;		
+	}
+}
 
 // preferences driven shrinking
 Formula Master::manthan_shrink(){
@@ -103,7 +136,7 @@ Formula Master::manthan_shrink(){
 	Formula critical(dimension, false);
 	cout << "base: " << count_ones(base) << ", pool: " << count_ones(pool) << endl;
 
-
+	print_values(seed, value);
 
 	int ones = count_ones(pool);
 	while(ones > 0){
@@ -117,7 +150,8 @@ Formula Master::manthan_shrink(){
 		}
 		pool[c] = false;
 		seed[c] = false;		
-		if(msSolver->solve(seed, false, false)){
+		Formula core = seed;
+		if(msSolver->solve(core, true, false)){
 			seed[c] = true;
 			critical[c] = true;
 
@@ -131,11 +165,9 @@ Formula Master::manthan_shrink(){
 					if(value[c2] < 1) pool[c2] = false;
 				}
 			}
+			print_values(seed, value);
 		}else{
-			for(int i = 0; i < dimension; i++){
-				if(!seed[i]) pool[i] = false;
-				if(base[i]) seed[i] = true;
-			}
+			trim_core(c, core, seed, base, value, pool);
 		}
 		ones = count_ones(pool);
 	}

@@ -104,11 +104,10 @@ int main(int argc, char *argv[]){
 		solver.DBG = dbg.getValue();
 		solver.enumerate();
 		
-		cout << "Enumeration completed" << endl;
-		cout << "Number of MUSes: " << solver.muses.size() << endl;
 		chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
 	        auto duration = chrono::duration_cast<chrono::microseconds>( now - initial_time ).count() / float(1000000);
 		cout << "Total time: " << duration << endl;
+		cout << "SAT solver calls: " << solver.satSolver->checks << endl;
 
 	}catch (TCLAP::ArgException &e){
 		std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
