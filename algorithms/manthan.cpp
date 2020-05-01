@@ -14,7 +14,6 @@ void Master::manthan_base(){
 		Formula mus = manthan_shrink(top);
 		all_muses.push_back(mus);
 
-
 		int maxC = -1;
 		int maxV = 0;
 		for(int c = 0; c < dimension; c++){
@@ -150,6 +149,11 @@ void trim_core(int c, Formula &core, Formula &seed, Formula &base, vector<int> &
 // preferences driven shrinking
 Formula Master::manthan_shrink(Formula top){
 	vector<Formula> cores;
+	Formula core = top;
+	if(is_valid(core, true, false)) print_err("top is valid");
+	cores.push_back(core);
+	if(count_ones(core) == count_ones(top)) return core;
+
 	BooleanSolver *msSolver = static_cast<BooleanSolver*>(satSolver);
 	Formula seed = top;
 	Formula base(dimension, false);
@@ -213,6 +217,7 @@ Formula Master::manthan_shrink(Formula top){
 		ones = count_ones(pool);
 	}
 
+	cout << "cores: " << cores.size() << endl;
 	Formula finalCore;
 	int min_price = 1000000;
 	for(auto m: cores){
