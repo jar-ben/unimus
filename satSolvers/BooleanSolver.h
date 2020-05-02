@@ -19,11 +19,7 @@ public:
 	std::map<std::vector<int>,int> clauses_map;
 	std::set<int> xVars;
 	std::vector<int> yVars;
-	std::unordered_map<int,int> yVarsDependsOn;
-	std::unordered_map<int,int> yVarsDependents;
-	int listx;
-	int listy;
-
+	std::unordered_map<int,int> yVarsPrice;
 	bool parse(std::string filename);
 	void add_clause(std::vector<int> cl);
 	std::string toString(std::vector<bool> &f);

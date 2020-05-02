@@ -86,8 +86,6 @@ int main(int argc, char *argv[]){
 		solver.minimum_mus = minimumMUS.getValue();
 		solver.output_file = output.getValue();
 		solver.verbose = verbose.getValue();
-		solver.depthMUS = (recursionDepthLimit.getValue() >= 0)? recursionDepthLimit.getValue() : solver.dimension;
-		solver.dim_reduction = reductionCoeff.getValue();
 		solver.validate_mus_c = verify.getValue();		
 		solver.conflicts_negation = conflictsNegation.getValue();
 		std::string shr = shrink.getValue();
@@ -100,7 +98,6 @@ int main(int argc, char *argv[]){
 		solver.satSolver->mcslsArgs = mcslsArgs.getValue();
 		solver.satSolver->shrinkMining = shrinkMining.getValue();
 		solver.mss_rotation = mssRotation.getValue();
-		solver.mssRotationLimit = (mssRotationLimit.getValue() >= 0)? mssRotationLimit.getValue() : 1000000;
 		solver.DBG = dbg.getValue();
 		solver.enumerate();
 		

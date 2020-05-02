@@ -22,7 +22,7 @@ void Master::manthan_base(){
 			for(auto l: msSolver->clauses[c]){
 				int var = abs(l);
 				if(find(msSolver->yVars.begin(), msSolver->yVars.end(),var) != msSolver->yVars.end())
-					price += (10 * msSolver->yVarsDependents[var]) + msSolver->yVarsDependsOn[var];
+					price += msSolver->yVarsPrice[var];
 			}
 			if(price > maxV){
 				maxV = price;
@@ -79,26 +79,16 @@ void Master::manthan_base(){
 
 int Master::manthan_price(Formula f){
 	BooleanSolver *msSolver = static_cast<BooleanSolver*>(satSolver);
-	set<int> yVars;
-	set<int> xVars;
-	set<int> allVars;
-	//collect the variables that appear in the MUS
+	int price = 0;
 	for(int c = 0; c < dimension; c++){
 		if(!f[c]) continue;
 		for(auto l: msSolver->clauses[c]){
 			int var = (l > 0)? l: -l;
-			if(msSolver->xVars.find(var) != msSolver->xVars.end())
-				xVars.insert(var);
 			if(find(msSolver->yVars.begin(), msSolver->yVars.end(),var) != msSolver->yVars.end()){
-				yVars.insert(var);
+				price += msSolver->yVarsPrice[var];
 			}
 		}
 	}
-
-	//compute the value of the MUS
-	int price = xVars.size();
-	for(auto v: yVars)
-		price += (10 * msSolver->yVarsDependents[v]) + msSolver->yVarsDependsOn[v];	
 	return price;
 }
 
@@ -169,7 +159,7 @@ Formula Master::manthan_shrink(Formula top){
 			int var = abs(l);
 			if(find(msSolver->yVars.begin(), msSolver->yVars.end(),var) != msSolver->yVars.end()){
 				parentMap[var].push_back(c);
-				value[c] += (10 * msSolver->yVarsDependents[var]) + msSolver->yVarsDependsOn[var];
+				value[c] += msSolver->yVarsPrice[var];
 			}
 		}
 		if(value[c] == 0)
@@ -205,7 +195,7 @@ Formula Master::manthan_shrink(Formula top){
 				if(var > msSolver->vars) break; //skip the activation variable
 				if(find(msSolver->yVars.begin(), msSolver->yVars.end(),var) == msSolver->yVars.end()) continue;
 				for(auto c2: parentMap[var]){
-					value[c2] -= (10 * msSolver->yVarsDependents[var]) + msSolver->yVarsDependsOn[var];
+					value[c2] -= msSolver->yVarsPrice[var];
 					if(value[c2] < 1) pool[c2] = false;
 				}
 			}

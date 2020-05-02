@@ -2,8 +2,6 @@
 #define REMUS_MASTER_H
 
 #include "satSolvers/MSHandle.h"
-#include "satSolvers/GlucoseHandle.h"
-#include "satSolvers/CadicalHandle.h"
 #include "Explorer.h"
 #include "types_h.h"
 #include <set>
@@ -86,41 +84,8 @@ public:
 
 	int rotateMSS(Formula mss);
 
-	//reMUS algorithm functions
-	int depthMUS;
-	float dim_reduction;
-	int current_depth;
-	void find_all_muses_duality_based_remus(Formula subset, Formula crits, int depth);
-	void extend_mus(Formula &top, Formula &mus);
-
-	//unimusRec algorithm functions
-	int mssRotationLimit;
-	int unimus_refines;
-	int critical_extension_saves;
-	std::stack<int> unimus_rotation_stack;
-	int unimus_rotated;
-	int unimus_attempts;
-	void unimusRecMain();
-	bool unimusRecRefine();
-	void unimusRec(Formula subset, Formula crits, int depth);
-	void unimusRec_add_block(MUS &m1, int mid, vector<vector<int>> &blocks, vector<vector<int>> &blocks_hitmap);
-	void unimusRec_rotate_mus(int mid, Formula cover, Formula subset, vector<int> &localMuses);
-	void unimusRec_mark_mus(MUS &mus, Formula cover, Formula subset);
-	Formula unimusRec_propagateToUnsat(Formula base, Formula cover, vector<pair<int,int>> implied, 
-		vector<vector<int>> &blocks, vector<vector<int>> &blocks_hitmap);
-	Formula unimusRec_propagateRefine(Formula &conflict, Formula &base, vector<pair<int,int>> &implied);
-	bool unimusRec_isAvailable(int c, Formula &subset, vector<vector<int>> &blocks, vector<vector<int>> &blocks_hitmap);
-	Formula currentSubset;
-	int unimusRecDepth;
-
 	void critical_extension(Formula &f, Formula &crits);
 
-	//TOME algorithm functions
-	void find_all_muses_tome();
-	pair<Formula, Formula> local_mus(Formula bot, Formula top, int diff);
-
-	//MARCO algorithm functions
-	void marco_base();
 
 	void manthan_base();
 	Formula manthan_shrink(Formula top);

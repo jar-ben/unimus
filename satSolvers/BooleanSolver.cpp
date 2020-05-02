@@ -28,17 +28,17 @@ vector<int> BooleanSolver::convert_clause(string clause){
 
 
 void BooleanSolver::add_clause(vector<int> cl){
-        std::sort(cl.begin(), cl.end());
-        vector<int> copy = cl;
-        copy.pop_back(); //get rid of control variable
+//        std::sort(cl.begin(), cl.end());
+//        vector<int> copy = cl;
+//        copy.pop_back(); //get rid of control variable
         clauses.push_back(cl);
-        clauses_map[copy] = clauses.size() - 1; //used for manipulation with single MUS extractions (muser2, dmuser)
-        for(auto &lit: copy){
-                if(lit > 0)
-                        hitmap_pos[lit - 1].push_back(clauses.size() - 1);
-                else
-                        hitmap_neg[(-1 * lit) - 1].push_back(clauses.size() - 1);
-        }
+//        clauses_map[copy] = clauses.size() - 1; //used for manipulation with single MUS extractions (muser2, dmuser)
+//        for(auto &lit: copy){
+//                if(lit > 0)
+//                        hitmap_pos[lit - 1].push_back(clauses.size() - 1);
+//                else
+//                        hitmap_neg[(-1 * lit) - 1].push_back(clauses.size() - 1);
+//        }
 }
 
 //Parses the input .cnf file
@@ -68,12 +68,9 @@ bool BooleanSolver::parse(string path){
 			is >> pom;	// mainVar
 			is >> mainVar;	// mainVariable
 			if(pom == "Xvar") xVars.insert(abs(mainVar));
-			if(pom == "clistx") listx = mainVar;
-			if(pom == "clisty") listy = mainVar;
 			if(pom == "Yvar"){ 
 				yVars.push_back(abs(mainVar));
-				is >> yVarsDependsOn[mainVar];
-				is >> yVarsDependents[mainVar];
+				is >> yVarsPrice[mainVar];
 			}
 		}
                 else if(line[0] == 'c')
@@ -88,8 +85,8 @@ bool BooleanSolver::parse(string path){
                 }
         }
         cout << "vars: " << vars << endl;
-        hitmap_pos.resize(vars);
-        hitmap_neg.resize(vars);
+        //hitmap_pos.resize(vars);
+        //hitmap_neg.resize(vars);
         for(size_t i = 0; i < clauses_str.size(); i++){
                 clause = convert_clause(clauses_str[i]);
                 clause.push_back(vars + i + 1); //control variable
@@ -98,9 +95,9 @@ bool BooleanSolver::parse(string path){
 	dimension = clauses.size();
 	srand (time(NULL));
 	rotated_crits = 0;
-	flip_edges_computed.resize(dimension, false);
-	flip_edges.resize(dimension);
-	flip_edges_flatten.resize(dimension);
+	//flip_edges_computed.resize(dimension, false);
+	//flip_edges.resize(dimension);
+	//flip_edges_flatten.resize(dimension);
 
         return true;
 }
@@ -428,20 +425,6 @@ vector<bool> BooleanSolver::shrink(std::vector<bool> &f, std::vector<bool> crits
 			}
 		}
 		return s;
-        }
-        if(shrink_alg == "default"){
-		vector<bool> mus;
-                try{
-                        mus = shrink_mcsmus(f, crits);
-                } catch (...){
-                        //mcsmus sometimes fails so we use muser instead
-                        cout << "mcsmus crashed during shrinking, using muser2 instead" << endl;
-                        stringstream exp;
-                        exp << "./tmp/f_" << hash << ".cnf";
-                        export_formula_crits(f, exp.str(), crits);
-                        mus = shrink_muser(exp.str(), hash);
-                }
-                return mus;
         }
         stringstream exp;
         exp << "./tmp/f_" << hash << ".cnf";

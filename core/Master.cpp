@@ -13,14 +13,7 @@ Master::Master(string filename, string alg, string ssolver){
 	chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
 
 	if(ends_with(filename, "cnf")){
-		cout << "solver: " << sat_solver << endl;
-		if(sat_solver == "glucose"){
-			satSolver = new GlucoseHandle(filename);
-		}else if(sat_solver == "cadical"){
-			satSolver = new CadicalHandle(filename);
-		}else{
-			satSolver = new MSHandle(filename);
-		}
+		satSolver = new MSHandle(filename);
 		domain = "sat";
 	}
 	else
@@ -35,11 +28,8 @@ Master::Master(string filename, string alg, string ssolver){
         explorer = new Explorer(dimension);	
 	//explorer->satSolver = satSolver;
         verbose = false;
-	depthMUS = 0;
-	dim_reduction = 0.5;
 	output_file = "";
 	validate_mus_c = false;
-	current_depth = 0;
 	unex_sat = unex_unsat = 0;
         hash = random_number();
 	satSolver->hash = hash;
@@ -49,9 +39,6 @@ Master::Master(string filename, string alg, string ssolver){
 	extended = 0;
 	uni = Formula(dimension, false);
 	couni = Formula(dimension, true);
-	unimus_rotated = unimus_attempts = 0;
-	critical_extension_saves = 0;
-	unimus_refines = 0;
 	satSolver->explorer = explorer;
 	unex_unsat_time = unex_sat_time = total_shrink_time = 0;
 	total_shrinks = 0;
@@ -192,7 +179,6 @@ void Master::critical_extension(Formula &f, Formula &crits){
 		}
 	}
 	int finalSize = count_ones(crits);
-	critical_extension_saves += (finalSize - initSize);
 }
 
 MUS& Master::shrink_formula(Formula &f, Formula crits){
@@ -213,7 +199,7 @@ MUS& Master::shrink_formula(Formula &f, Formula crits){
 		}
 
 		BooleanSolver *bSolver = static_cast<BooleanSolver*>(satSolver);
-		critical_extension_saves += bSolver->critical_extension(f, crits);
+		bSolver->critical_extension(f, crits);
 		float c_crits = count_ones(crits);
 		if(int(c_crits) == f_size){ // each constraint in f is critical for f, i.e. it is a MUS 
 			muses.push_back(MUS(f, -1, muses.size(), f_size)); //-1 duration means skipped shrink
@@ -482,7 +468,7 @@ void Master::mark_MSS_executive(MSS f, bool block_unex){
 		cout << ", intersection: " << count_ones(explorer->mus_intersection);
 		cout << ", union: " << count_ones(uni) << ", dimension: " << dimension;
 		cout << ", seed dimension: " << f.seed_dimension << ", grow duration: " << f.duration;
-		cout << ", grows: " << satSolver->grows << ", depth: " << current_depth;
+		cout << ", grows: " << satSolver->grows;
 		cout << ", sats: " << explorer->mcses.size() << ", unsats: " << explorer->muses.size() << ", bit: " << bit << ", guessed: " << guessed;
 		cout << ", exp calls: " << explorer->calls << ", rotated msses: " << rotated_msses << ", extended: " << extended;
 		cout << endl;
@@ -506,10 +492,6 @@ void Master::mark_MSS(MSS f, bool block_unex){
 		Formula mss = rotation_queue.back();
 		rotation_queue.pop_back();
 		rotateMSS(mss);
-		if(++i > mssRotationLimit){
-			rotation_queue.clear();
-			return;
-		}
 	}
 }
 
@@ -518,86 +500,10 @@ void Master::mark_MUS(MUS& f, bool block_unex){
 	couni = complement(uni);
 	if(validate_mus_c) validate_mus(f.bool_mus);		
 	explorer->block_up(f.bool_mus);
-	//explorer->block_down(f.bool_mus);
-
-	chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
-	auto duration = chrono::duration_cast<chrono::microseconds>( now - initial_time ).count() / float(1000000);
-        if(algorithm == "unibase2") return;
-	cout << "Found MUS #" << muses.size() << ", msses: " << msses.size() <<  ", mus dimension: " << f.dimension;
-	cout << ", checks: " << satSolver->checks << ", time: " << duration;
-	cout << ", unex sat: " << unex_sat << ", unex unsat: " << unex_unsat << ", criticals: " << explorer->criticals;
-	cout << ", intersections: " << std::count(explorer->mus_intersection.begin(), explorer->mus_intersection.end(), true);
-	cout << ", union: " << count_ones(uni) << ", dimension: " << dimension;
-	cout << ", seed dimension: " << f.seed_dimension << ", shrink duration: " << f.duration;
-	cout << ", shrinks: " << satSolver->shrinks << ", unimus rotated: " << unimus_rotated << ", unimus attempts: " << unimus_attempts;
-	cout << ", bit: " << bit;
-	cout << ", stack size: " << unimus_rotation_stack.size();
-	
-	cout << ", critical_extension_saves: " << critical_extension_saves;
-	cout << ", unimus_refines: " << unimus_refines;
-	cout << ", mcsmus saves: " << satSolver->shrinkMinedCrits;
-	//cout << ", unimusRecDepth: " << unimusRecDepth;
-	cout << endl;
-
-	if(output_file != ""){
-		if(true || minimum_mus){
-			BooleanSolver *msSolver = static_cast<BooleanSolver*>(satSolver);
-			set<int> yVars;
-			set<int> xVars;
-			set<int> allVars;
-			//collect the variables that appear in the MUS
-			for(auto c: f.int_mus){
-				for(auto l: msSolver->clauses[c]){
-					int var = (l > 0)? l: -l;
-					allVars.insert(var);
-					if(msSolver->xVars.find(var) != msSolver->xVars.end())
-						xVars.insert(var);
-					if(find(msSolver->yVars.begin(), msSolver->yVars.end(),var) != msSolver->yVars.end()){
-						yVars.insert(var);
-					}
-				}	
-			}
-
-			//compute the value of the MUS
-			int value = 0;
-			for(auto v: yVars)
-				value += (10 * msSolver->yVarsDependents[v]) + msSolver->yVarsDependsOn[v];
-
-			//minimize value
-			if(value < minimum_mus_value){
-				minimum_mus_value = value;
-				ofstream file;
-				file.open(output_file);	
-				for(auto var: yVars)
-					file << var << endl;
-				for(auto var: xVars)
-					file << var << endl;
-				file.close();
-			}
-		}else{
-			write_mus_to_file(f);
-		}
-	}
-	//if(muses.size() > 100) exit(0);
 }
 
 void Master::enumerate(){
-	cout << "running algorithm: " << algorithm << endl;
-
-	if(algorithm == "remus"){
-		find_all_muses_duality_based_remus(Formula (dimension, true), Formula (dimension, false), 0);
-	}
-	else if(algorithm == "tome"){
-		find_all_muses_tome();
-	}
-	else if(algorithm == "marco"){
-		marco_base();
-	}
-	else if(algorithm == "unimus"){
-		unimusRecMain();
-	}else if(algorithm == "manthan"){
-		manthan_base();
-	}
+	manthan_base();
 	return;
 }
 
