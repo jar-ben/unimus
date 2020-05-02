@@ -67,7 +67,10 @@ bool BooleanSolver::parse(string path){
 			is >> pom;	// c
 			is >> pom;	// mainVar
 			is >> mainVar;	// mainVariable
-			if(pom == "Xvar") xVars.insert(abs(mainVar));
+			if(pom == "Xvar"){
+				xVars.insert(abs(mainVar));
+				is >> xVarsPrice[mainVar];
+			}
 			if(pom == "Yvar"){ 
 				yVars.push_back(abs(mainVar));
 				is >> yVarsPrice[mainVar];

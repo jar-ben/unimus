@@ -20,6 +20,7 @@ public:
 	std::set<int> xVars;
 	std::vector<int> yVars;
 	std::unordered_map<int,int> yVarsPrice;
+	std::unordered_map<int,int> xVarsPrice;
 	bool parse(std::string filename);
 	void add_clause(std::vector<int> cl);
 	std::string toString(std::vector<bool> &f);

@@ -6,48 +6,11 @@
 #include <random>
 
 void Master::manthan_base(){
-	BooleanSolver *msSolver = static_cast<BooleanSolver*>(satSolver);
-
-	vector<Formula> all_muses;
-	Formula top(dimension, true);
-	for(int i = 0; i < 1; i++){
-		Formula mus = manthan_shrink(top);
-		all_muses.push_back(mus);
-
-		int maxC = -1;
-		int maxV = 0;
-		for(int c = 0; c < dimension; c++){
-			if(!mus[c]) continue;
-			int price = 0;
-			for(auto l: msSolver->clauses[c]){
-				int var = abs(l);
-				if(find(msSolver->yVars.begin(), msSolver->yVars.end(),var) != msSolver->yVars.end())
-					price += msSolver->yVarsPrice[var];
-			}
-			if(price > maxV){
-				maxV = price;
-				maxC = c;
-			}		
-		}
-		cout << "MUS price: "<< manthan_price(mus) << ", checks: " << msSolver->checks << ", max price: " << maxV << endl;
-		if(maxC == -1) break;
-		top[maxC] = false;
-		if(is_valid(top, false, false))
-			break;
-	}
-
-	
-	int min_price = 1000000;
-	Formula mus;
-	for(auto m: all_muses){
-		auto price = manthan_price(m);
-		if(price < min_price){
-			min_price = price;
-			mus = m;
-		}
-	}
+	Formula top(dimension, true); 
+	Formula mus = manthan_shrink(top);
 
 	//export variables that appear in the MUS
+	BooleanSolver *msSolver = static_cast<BooleanSolver*>(satSolver);
 	set<int> yVars;
 	set<int> xVars;
 	set<int> allVars;
@@ -73,50 +36,31 @@ void Master::manthan_base(){
 		file << var << endl;
 */
 	file.close();
-	cout << "price: " << manthan_price(mus) << endl;
 	return;
 }
 
 int Master::manthan_price(Formula f){
 	BooleanSolver *msSolver = static_cast<BooleanSolver*>(satSolver);
-	int price = 0;
+	set<int> Yvars;
+	set<int> Xvars;
 	for(int c = 0; c < dimension; c++){
 		if(!f[c]) continue;
 		for(auto l: msSolver->clauses[c]){
 			int var = (l > 0)? l: -l;
 			if(find(msSolver->yVars.begin(), msSolver->yVars.end(),var) != msSolver->yVars.end()){
-				price += msSolver->yVarsPrice[var];
+				Yvars.insert(var);
+			}
+			if(find(msSolver->xVars.begin(), msSolver->xVars.end(),var) != msSolver->xVars.end()){
+				Xvars.insert(var);
 			}
 		}
 	}
+	int price = 0;
+	for(auto var: Yvars)
+		price += msSolver->yVarsPrice[var];
+	for(auto var: Xvars)
+		price += msSolver->xVarsPrice[var];
 	return price;
-}
-
-void print_values(vector<bool> &seed, vector<int> &values){
-	return;
-	vector<int> value_copy;
-	for(int i = 0; i < seed.size(); i ++){
-		if(seed[i]) value_copy.push_back(values[i]);
-	}
-	sort(value_copy.begin(), value_copy.end());
-	for(auto v: value_copy)
-		if(v > 0) cout << v << " ";
-	cout << endl << endl;
-}
-
-void trim_core2(int c, Formula &core, Formula &seed, Formula &base, vector<int> &value, Formula &pool){
-	bool useCore = true;
-	for(int i = 0; i < core.size(); i++){
-		if(core[i] && i != c && (value[i] * 2.2) > value[c]){
-			useCore = false;
-			break;
-		}
-	}
-	//if(useCore) seed = core;
-	for(int i = 0; i < core.size(); i++){
-		if(!seed[i]) pool[i] = false;
-		if(base[i]) seed[i] = true;
-	}
 }
 
 void trim_core(int c, Formula &core, Formula &seed, Formula &base, vector<int> &value, Formula &pool){
@@ -149,7 +93,7 @@ Formula Master::manthan_shrink(Formula top){
 	Formula base(dimension, false);
 	Formula pool(dimension, false);
 	vector<int> value(dimension, 0);
-
+	Formula critical(dimension, false);
 	vector<vector<int>> parentMap(*max_element(msSolver->yVars.begin(), msSolver->yVars.end()) + 1, vector<int>());
 
 	for(int c = 0; c < dimension; c++){
@@ -157,9 +101,12 @@ Formula Master::manthan_shrink(Formula top){
 		auto item = make_pair(c,0);
 		for(auto l: msSolver->clauses[c]){
 			int var = abs(l);
+			parentMap[var].push_back(c);
 			if(find(msSolver->yVars.begin(), msSolver->yVars.end(),var) != msSolver->yVars.end()){
-				parentMap[var].push_back(c);
 				value[c] += msSolver->yVarsPrice[var];
+			}
+			if(find(msSolver->xVars.begin(), msSolver->xVars.end(),var) != msSolver->xVars.end()){
+				value[c] += msSolver->xVarsPrice[var];
 			}
 		}
 		if(value[c] == 0)
@@ -168,9 +115,6 @@ Formula Master::manthan_shrink(Formula top){
 			pool[c] = true;	
 	}
 
-	Formula critical(dimension, false);
-
-	print_values(seed, value);
 
 	int ones = count_ones(pool);
 	while(ones > 0){
@@ -195,11 +139,15 @@ Formula Master::manthan_shrink(Formula top){
 				if(var > msSolver->vars) break; //skip the activation variable
 				if(find(msSolver->yVars.begin(), msSolver->yVars.end(),var) == msSolver->yVars.end()) continue;
 				for(auto c2: parentMap[var]){
-					value[c2] -= msSolver->yVarsPrice[var];
+					if(find(msSolver->yVars.begin(), msSolver->yVars.end(),var) != msSolver->yVars.end()){
+						value[c2] -= msSolver->yVarsPrice[var];
+					}
+					if(find(msSolver->xVars.begin(), msSolver->xVars.end(),var) != msSolver->xVars.end()){
+						value[c2] -= msSolver->xVarsPrice[var];
+					}
 					if(value[c2] < 1) pool[c2] = false;
 				}
 			}
-			print_values(seed, value);
 		}else{
 			cores.push_back(core);
 			trim_core(c, core, seed, base, value, pool);
@@ -209,7 +157,7 @@ Formula Master::manthan_shrink(Formula top){
 
 	cout << "cores: " << cores.size() << endl;
 	Formula finalCore;
-	int min_price = 1000000;
+	int min_price = 1000000000;
 	for(auto m: cores){
 		auto price = manthan_price(m);
 		if(price < min_price){

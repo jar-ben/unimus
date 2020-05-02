@@ -1,342 +1,412 @@
-c Yvar 3947 30
-c Yvar 3948 20
-c Yvar 3949 40
-c Yvar 3950 33
-c Yvar 3951 35
-c Yvar 3952 30
-c Yvar 3953 7
-c Yvar 3954 15
-c Yvar 3955 12
-c Yvar 3956 15
-c Yvar 3957 10
-c Yvar 3958 10
-c Yvar 3959 13
-c Yvar 3960 25
-c Yvar 3961 20
-c Yvar 3962 22
-c Yvar 3963 33
-c Yvar 3964 15
-c Yvar 3965 18
-c Yvar 3966 12
-c Yvar 3967 22
-c Yvar 3968 22
+c Xvar 3877 1
+c Xvar 3878 1
+c Xvar 3879 1
+c Xvar 3880 1
+c Xvar 3881 1
+c Xvar 3882 1
+c Xvar 3883 1
+c Xvar 3884 1
+c Xvar 3885 1
+c Xvar 3886 1
+c Xvar 3887 1
+c Xvar 3888 1
+c Xvar 3889 1
+c Xvar 3890 1
+c Xvar 3891 1
+c Xvar 3892 1
+c Xvar 3893 1
+c Xvar 3894 1
+c Xvar 3895 1
+c Xvar 3896 1
+c Xvar 3897 1
+c Xvar 3898 1
+c Xvar 3899 1
+c Xvar 3900 1
+c Xvar 3901 1
+c Xvar 3902 1
+c Xvar 3903 1
+c Xvar 3904 1
+c Xvar 3905 1
+c Xvar 3906 1
+c Xvar 3907 1
+c Xvar 3908 1
+c Xvar 3909 1
+c Xvar 3910 1
+c Xvar 3911 1
+c Xvar 3912 1
+c Xvar 3913 1
+c Xvar 3914 1
+c Xvar 3915 1
+c Xvar 3916 1
+c Xvar 3917 1
+c Xvar 3918 1
+c Xvar 3919 1
+c Xvar 3920 1
+c Xvar 3921 1
+c Xvar 3922 1
+c Xvar 3923 1
+c Xvar 3924 1
+c Xvar 3925 1
+c Xvar 3926 1
+c Xvar 3927 1
+c Xvar 3928 1
+c Xvar 3929 1
+c Xvar 3930 1
+c Xvar 3931 1
+c Xvar 3932 1
+c Xvar 3933 1
+c Xvar 3934 1
+c Xvar 3935 1
+c Xvar 3936 1
+c Xvar 3937 1
+c Xvar 3938 1
+c Xvar 3939 1
+c Xvar 3940 1
+c Xvar 3941 1
+c Xvar 3942 1
+c Xvar 3943 1
+c Xvar 3944 1
+c Xvar 3945 1
+c Xvar 3946 1
+c Yvar 3947 2
+c Yvar 3948 0
+c Yvar 3949 0
+c Yvar 3950 0
+c Yvar 3951 0
+c Yvar 3952 10
+c Yvar 3953 20
+c Yvar 3954 10
+c Yvar 3955 0
+c Yvar 3956 0
+c Yvar 3957 2
+c Yvar 3958 13
+c Yvar 3959 10
+c Yvar 3960 7
+c Yvar 3961 0
+c Yvar 3962 0
+c Yvar 3963 2
+c Yvar 3964 0
+c Yvar 3965 0
+c Yvar 3966 2
+c Yvar 3967 0
+c Yvar 3968 0
 c Yvar 3969 0
-c Yvar 3970 5
-c Yvar 3971 46
-c Yvar 3972 40
-c Yvar 3973 40
-c Yvar 3974 62
-c Yvar 3975 42
-c Yvar 3976 42
-c Yvar 3977 32
-c Yvar 3978 32
-c Yvar 3979 10
-c Yvar 3980 60
-c Yvar 3981 40
-c Yvar 3982 52
-c Yvar 3983 20
-c Yvar 3984 31
-c Yvar 3985 40
-c Yvar 3986 32
-c Yvar 3987 10
-c Yvar 3988 53
-c Yvar 3989 41
-c Yvar 3990 31
-c Yvar 3991 43
+c Yvar 3970 0
+c Yvar 3971 0
+c Yvar 3972 0
+c Yvar 3973 0
+c Yvar 3974 0
+c Yvar 3975 0
+c Yvar 3976 0
+c Yvar 3977 0
+c Yvar 3978 0
+c Yvar 3979 0
+c Yvar 3980 0
+c Yvar 3981 0
+c Yvar 3982 0
+c Yvar 3983 0
+c Yvar 3984 0
+c Yvar 3985 10
+c Yvar 3986 0
+c Yvar 3987 0
+c Yvar 3988 0
+c Yvar 3989 0
+c Yvar 3990 10
+c Yvar 3991 10
 c Yvar 3992 0
-c Yvar 3993 16
-c Yvar 3994 6
+c Yvar 3993 0
+c Yvar 3994 0
 c Yvar 3995 0
-c Yvar 3996 10
+c Yvar 3996 0
 c Yvar 3997 0
 c Yvar 3998 0
 c Yvar 3999 0
 c Yvar 4000 0
-c Yvar 4001 20
-c Yvar 4002 2
+c Yvar 4001 0
+c Yvar 4002 0
 c Yvar 4003 0
 c Yvar 4004 0
-c Yvar 4005 0
+c Yvar 4005 2
 c Yvar 4006 0
-c Yvar 4007 27
-c Yvar 4008 12
+c Yvar 4007 0
+c Yvar 4008 0
 c Yvar 4009 0
 c Yvar 4010 0
 c Yvar 4011 0
-c Yvar 4012 6
-c Yvar 4013 32
+c Yvar 4012 0
+c Yvar 4013 0
 c Yvar 4014 0
-c Yvar 4015 13
+c Yvar 4015 2
 c Yvar 4016 0
-c Yvar 4017 10
-c Yvar 4018 20
+c Yvar 4018 0
 c Yvar 4019 0
-c Yvar 4020 20
-c Yvar 4021 20
-c Yvar 4022 20
-c Yvar 4023 21
+c Yvar 4020 0
+c Yvar 4021 0
+c Yvar 4022 0
+c Yvar 4023 0
 c Yvar 4024 0
-c Yvar 4025 10
-c Yvar 4026 36
-c Yvar 4027 23
-c Yvar 4028 36
-c Yvar 4029 20
-c Yvar 4030 14
+c Yvar 4025 0
+c Yvar 4026 0
+c Yvar 4027 0
+c Yvar 4028 0
+c Yvar 4029 0
+c Yvar 4030 0
 c Yvar 4031 0
-c Yvar 4032 30
-c Yvar 4033 12
+c Yvar 4032 0
+c Yvar 4033 0
 c Yvar 4034 0
-c Yvar 4035 36
+c Yvar 4035 0
 c Yvar 4036 0
-c Yvar 4037 26
-c Yvar 4038 23
-c Yvar 4039 2
-c Yvar 4040 41
-c Yvar 4041 20
-c Yvar 4042 31
-c Yvar 4043 33
+c Yvar 4037 0
+c Yvar 4038 0
+c Yvar 4039 0
+c Yvar 4040 0
+c Yvar 4041 10
+c Yvar 4042 0
+c Yvar 4043 0
 c Yvar 4044 10
-c Yvar 4045 22
-c Yvar 4046 10
-c Yvar 4047 41
-c Yvar 4048 35
-c Yvar 4049 23
-c Yvar 4050 11
-c Yvar 4051 37
+c Yvar 4045 0
+c Yvar 4046 0
+c Yvar 4047 0
+c Yvar 4048 0
+c Yvar 4049 0
+c Yvar 4050 0
+c Yvar 4051 0
 c Yvar 4052 0
 c Yvar 4053 0
-c Yvar 4054 10
-c Yvar 4055 10
+c Yvar 4054 0
+c Yvar 4055 0
 c Yvar 4056 0
 c Yvar 4057 0
 c Yvar 4058 0
 c Yvar 4059 0
 c Yvar 4060 0
-c Yvar 4061 2
+c Yvar 4061 0
 c Yvar 4062 0
 c Yvar 4063 0
 c Yvar 4064 0
 c Yvar 4065 0
 c Yvar 4066 0
-c Yvar 4067 2
+c Yvar 4067 0
 c Yvar 4068 0
 c Yvar 4069 0
 c Yvar 4070 0
 c Yvar 4071 0
 c Yvar 4072 0
-c Yvar 4073 2
-c Yvar 4074 20
+c Yvar 4073 0
+c Yvar 4074 0
 c Yvar 4075 0
-c Yvar 4076 20
-c Yvar 4077 6
-c Yvar 4078 12
+c Yvar 4076 0
+c Yvar 4077 0
+c Yvar 4078 0
 c Yvar 4079 0
-c Yvar 4080 22
-c Yvar 4081 10
-c Yvar 4082 20
-c Yvar 4083 20
-c Yvar 4084 20
-c Yvar 4085 10
+c Yvar 4080 0
+c Yvar 4081 0
+c Yvar 4082 0
+c Yvar 4083 0
+c Yvar 4084 0
+c Yvar 4085 0
 c Yvar 4086 0
 c Yvar 4087 0
-c Yvar 4088 10
-c Yvar 4089 10
-c Yvar 4090 10
-c Yvar 4091 24
+c Yvar 4088 0
+c Yvar 4089 0
+c Yvar 4090 0
+c Yvar 4091 0
 c Yvar 4092 0
 c Yvar 4093 0
-c Yvar 4094 21
-c Yvar 4095 21
-c Yvar 4096 10
+c Yvar 4094 0
+c Yvar 4095 0
+c Yvar 4096 0
 c Yvar 4097 0
-c Yvar 4098 37
-c Yvar 4099 6
+c Yvar 4098 0
+c Yvar 4099 0
 c Yvar 4100 0
-c Yvar 4101 24
-c Yvar 4102 12
+c Yvar 4101 0
+c Yvar 4102 0
 c Yvar 4103 0
-c Yvar 4104 20
+c Yvar 4104 0
 c Yvar 4105 0
-c Yvar 4106 10
+c Yvar 4106 0
 c Yvar 4107 0
 c Yvar 4108 0
-c Yvar 4109 10
+c Yvar 4109 0
 c Yvar 4110 0
 c Yvar 4111 0
-c Yvar 4112 10
+c Yvar 4112 0
 c Yvar 4113 0
-c Yvar 4114 12
+c Yvar 4114 0
 c Yvar 4115 0
 c Yvar 4116 0
 c Yvar 4117 0
 c Yvar 4118 0
-c Yvar 4119 12
-c Yvar 4120 3
-c Yvar 4121 50
-c Yvar 4122 36
-c Yvar 4123 20
-c Yvar 4124 12
-c Yvar 4125 20
-c Yvar 4126 21
-c Yvar 4127 36
-c Yvar 4128 21
-c Yvar 4129 33
-c Yvar 4130 38
+c Yvar 4119 0
+c Yvar 4120 0
+c Yvar 4121 0
+c Yvar 4122 0
+c Yvar 4123 0
+c Yvar 4124 0
+c Yvar 4125 0
+c Yvar 4126 0
+c Yvar 4127 0
+c Yvar 4128 0
+c Yvar 4129 0
+c Yvar 4130 10
 c Yvar 4131 0
 c Yvar 4132 0
-c Yvar 4133 10
-c Yvar 4134 20
+c Yvar 4133 0
+c Yvar 4134 0
 c Yvar 4135 0
 c Yvar 4136 0
+c Yvar 4137 0
 c Yvar 4138 0
 c Yvar 4139 0
 c Yvar 4140 0
 c Yvar 4141 0
 c Yvar 4142 0
-c Yvar 4143 0
+c Yvar 4143 10
 c Yvar 4144 0
 c Yvar 4145 0
 c Yvar 4146 0
 c Yvar 4147 0
 c Yvar 4148 0
-c Yvar 4149 10
+c Yvar 4149 0
 c Yvar 4150 0
 c Yvar 4151 0
 c Yvar 4152 0
 c Yvar 4153 0
 c Yvar 4154 0
 c Yvar 4155 0
-c Yvar 4156 21
+c Yvar 4156 0
 c Yvar 4157 0
-c Yvar 4158 20
-c Yvar 4159 10
+c Yvar 4158 0
+c Yvar 4159 0
 c Yvar 4160 0
-c Yvar 4161 10
+c Yvar 4161 0
 c Yvar 4162 0
 c Yvar 4163 0
 c Yvar 4164 0
-c Yvar 4165 10
-c Yvar 4166 10
-c Yvar 4167 32
-c Yvar 4168 10
-c Yvar 4169 10
-c Yvar 4170 31
-c Yvar 4171 21
+c Yvar 4165 0
+c Yvar 4166 0
+c Yvar 4167 0
+c Yvar 4168 0
+c Yvar 4169 0
+c Yvar 4170 0
+c Yvar 4171 0
 c Yvar 4172 0
-c Yvar 4173 10
-c Yvar 4174 42
-c Yvar 4175 26
-c Yvar 4176 10
-c Yvar 4177 21
+c Yvar 4173 0
+c Yvar 4174 0
+c Yvar 4175 0
+c Yvar 4176 0
+c Yvar 4177 0
 c Yvar 4178 0
-c Yvar 4179 26
+c Yvar 4179 0
 c Yvar 4180 0
 c Yvar 4181 0
-c Yvar 4182 10
+c Yvar 4182 0
 c Yvar 4183 0
 c Yvar 4184 0
 c Yvar 4185 0
 c Yvar 4186 0
 c Yvar 4187 0
 c Yvar 4188 0
-c Yvar 4189 10
+c Yvar 4189 0
 c Yvar 4190 0
-c Yvar 4191 3
+c Yvar 4191 0
 c Yvar 4192 0
 c Yvar 4193 0
 c Yvar 4194 0
 c Yvar 4195 0
 c Yvar 4196 0
-c Yvar 4197 10
-c Yvar 4198 130
+c Yvar 4197 0
+c Yvar 4198 0
 c Yvar 4199 0
-c Yvar 4200 50
-c Yvar 4201 53
-c Yvar 4202 30
-c Yvar 4203 11
-c Yvar 4204 32
-c Yvar 4205 35
-c Yvar 4206 54
-c Yvar 4207 31
-c Yvar 4208 53
-c Yvar 4209 10
-c Yvar 4210 10
-c Yvar 4211 10
-c Yvar 4212 30
+c Yvar 4200 0
+c Yvar 4201 0
+c Yvar 4202 0
+c Yvar 4203 0
+c Yvar 4204 0
+c Yvar 4205 0
+c Yvar 4206 0
+c Yvar 4207 0
+c Yvar 4208 0
+c Yvar 4209 0
+c Yvar 4210 0
+c Yvar 4211 0
+c Yvar 4212 0
 c Yvar 4213 0
-c Yvar 4214 23
+c Yvar 4214 0
 c Yvar 4215 0
 c Yvar 4216 0
 c Yvar 4217 0
 c Yvar 4218 0
 c Yvar 4219 0
-c Yvar 4220 29
+c Yvar 4220 0
 c Yvar 4221 0
-c Yvar 4222 20
+c Yvar 4222 0
 c Yvar 4223 0
-c Yvar 4224 20
+c Yvar 4224 0
 c Yvar 4225 0
-c Yvar 4226 19
+c Yvar 4226 0
 c Yvar 4227 0
-c Yvar 4228 10
+c Yvar 4228 0
 c Yvar 4229 0
-c Yvar 4230 10
+c Yvar 4230 0
 c Yvar 4231 0
-c Yvar 4232 16
+c Yvar 4232 0
 c Yvar 4233 0
-c Yvar 4234 22
+c Yvar 4234 0
 c Yvar 4235 0
-c Yvar 4236 20
-c Yvar 4237 20
-c Yvar 4238 20
-c Yvar 4239 10
+c Yvar 4236 0
+c Yvar 4237 0
+c Yvar 4238 0
+c Yvar 4239 0
 c Yvar 4240 0
-c Yvar 4241 20
+c Yvar 4241 0
 c Yvar 4242 0
-c Yvar 4243 10
-c Yvar 4244 20
-c Yvar 4245 42
-c Yvar 4246 10
-c Yvar 4247 10
-c Yvar 4248 21
-c Yvar 4249 11
-c Yvar 4250 10
-c Yvar 4251 10
-c Yvar 4252 45
-c Yvar 4253 24
-c Yvar 4254 30
-c Yvar 4255 39
+c Yvar 4243 0
+c Yvar 4244 0
+c Yvar 4245 0
+c Yvar 4246 0
+c Yvar 4247 0
+c Yvar 4248 0
+c Yvar 4249 0
+c Yvar 4250 0
+c Yvar 4251 0
+c Yvar 4252 0
+c Yvar 4253 0
+c Yvar 4254 0
+c Yvar 4255 0
 c Yvar 4256 0
-c Yvar 4257 37
-c Yvar 4258 10
-c Yvar 4259 20
+c Yvar 4257 0
+c Yvar 4258 0
+c Yvar 4259 0
 c Yvar 4260 0
-c Yvar 4261 0
+c Yvar 4261 10
 c Yvar 4262 0
-c Yvar 4263 10
-c Yvar 4264 0
+c Yvar 4263 0
+c Yvar 4264 10
 c Yvar 4265 0
-c Yvar 4266 10
-c Yvar 4267 30
-c Yvar 4268 20
-c Yvar 4269 55
+c Yvar 4266 0
+c Yvar 4267 0
+c Yvar 4268 0
+c Yvar 4269 0
 c Yvar 4270 0
 c Yvar 4271 0
 c Yvar 4272 0
 c Yvar 4273 0
-c Yvar 4274 51
+c Yvar 4274 0
 c Yvar 4275 0
-c Yvar 4276 62
-c Yvar 4277 0
-c Yvar 4278 22
-c Yvar 4279 31
-c Yvar 4280 40
-c Yvar 4281 20
-c Yvar 4282 50
-c Yvar 4283 20
-c Yvar 4284 20
-c Yvar 4285 30
-c Yvar 4286 50
+c Yvar 4276 10
+c Yvar 4277 10
+c Yvar 4278 0
+c Yvar 4279 0
+c Yvar 4280 0
+c Yvar 4281 0
+c Yvar 4282 0
+c Yvar 4283 0
+c Yvar 4284 0
+c Yvar 4285 0
+c Yvar 4286 0
 c Yvar 4287 0
 c Yvar 4288 0
 c Yvar 4289 0
@@ -345,85 +415,85 @@ c Yvar 4291 0
 c Yvar 4292 0
 c Yvar 4293 0
 c Yvar 4294 0
-c Yvar 4295 43
-c Yvar 4296 15
-c Yvar 4297 5
+c Yvar 4295 0
+c Yvar 4296 0
+c Yvar 4297 0
 c Yvar 4298 0
 c Yvar 4299 0
-c Yvar 4300 15
+c Yvar 4300 0
 c Yvar 4301 0
 c Yvar 4302 0
 c Yvar 4303 0
 c Yvar 4304 0
-c Yvar 4305 46
-c Yvar 4306 5
-c Yvar 4307 16
+c Yvar 4305 0
+c Yvar 4306 0
+c Yvar 4307 0
 c Yvar 4308 0
 c Yvar 4309 0
-c Yvar 4310 16
+c Yvar 4310 0
 c Yvar 4311 0
 c Yvar 4312 0
 c Yvar 4313 0
 c Yvar 4314 0
-c Yvar 4315 46
-c Yvar 4316 29
-c Yvar 4317 11
+c Yvar 4315 0
+c Yvar 4316 0
+c Yvar 4317 0
 c Yvar 4318 0
-c Yvar 4319 10
-c Yvar 4320 15
+c Yvar 4319 0
+c Yvar 4320 0
 c Yvar 4321 0
 c Yvar 4322 0
 c Yvar 4323 0
-c Yvar 4324 0
-c Yvar 4325 46
-c Yvar 4326 15
-c Yvar 4327 25
-c Yvar 4328 10
-c Yvar 4329 0
-c Yvar 4330 25
-c Yvar 4331 10
+c Yvar 4324 10
+c Yvar 4325 0
+c Yvar 4326 10
+c Yvar 4327 0
+c Yvar 4328 0
+c Yvar 4329 10
+c Yvar 4330 0
+c Yvar 4331 0
 c Yvar 4332 0
-c Yvar 4333 10
-c Yvar 4334 30
-c Yvar 4335 35
-c Yvar 4336 10
-c Yvar 4337 115
-c Yvar 4338 40
-c Yvar 4339 102
-c Yvar 4340 21
-c Yvar 4341 32
-c Yvar 4342 52
-c Yvar 4343 23
-c Yvar 4344 32
-c Yvar 4345 31
-c Yvar 4346 10
-c Yvar 4347 33
-c Yvar 4348 26
-c Yvar 4349 33
-c Yvar 4350 10
-c Yvar 4351 10
-c Yvar 4352 110
-c Yvar 4353 100
-c Yvar 4354 32
-c Yvar 4355 52
-c Yvar 4356 71
-c Yvar 4357 6
-c Yvar 4358 38
-c Yvar 4359 50
-c Yvar 4360 10
-c Yvar 4361 10
+c Yvar 4333 0
+c Yvar 4334 0
+c Yvar 4335 0
+c Yvar 4336 0
+c Yvar 4337 0
+c Yvar 4338 0
+c Yvar 4339 0
+c Yvar 4340 0
+c Yvar 4341 0
+c Yvar 4342 0
+c Yvar 4343 0
+c Yvar 4344 0
+c Yvar 4345 0
+c Yvar 4346 0
+c Yvar 4347 0
+c Yvar 4348 10
+c Yvar 4349 0
+c Yvar 4350 0
+c Yvar 4351 0
+c Yvar 4352 10
+c Yvar 4353 0
+c Yvar 4354 0
+c Yvar 4355 0
+c Yvar 4356 0
+c Yvar 4357 0
+c Yvar 4358 0
+c Yvar 4359 0
+c Yvar 4360 0
+c Yvar 4361 0
 c Yvar 4362 0
-c Yvar 4363 10
-c Yvar 4364 90
-c Yvar 4365 40
-c Yvar 4366 80
+c Yvar 4363 0
+c Yvar 4364 0
+c Yvar 4365 0
+c Yvar 4366 0
 c Yvar 4367 0
 c Yvar 4368 0
 c Yvar 4369 0
-c Yvar 4370 30
-c Yvar 4371 47
-c Yvar 4372 172
-c Yvar 4373 170
+c Yvar 4370 0
+c Yvar 4371 0
+c Yvar 4372 0
+c Yvar 4373 0
 c Yvar 4374 0
 c Yvar 4375 0
 c Yvar 4376 0
@@ -434,17 +504,17 @@ c Yvar 4380 0
 c Yvar 4381 0
 c Yvar 4382 0
 c Yvar 4383 0
-c Yvar 4384 10
-c Yvar 4385 10
+c Yvar 4384 0
+c Yvar 4385 0
 c Yvar 4386 0
-c Yvar 4387 10
-c Yvar 4388 10
+c Yvar 4387 0
+c Yvar 4388 0
 c Yvar 4389 0
-c Yvar 4390 10
-c Yvar 4391 20
-c Yvar 4392 10
-c Yvar 4393 10
-c Yvar 4394 10
+c Yvar 4390 0
+c Yvar 4391 0
+c Yvar 4392 0
+c Yvar 4393 0
+c Yvar 4394 0
 c ind 3877 3878 3879 3880 3881 3882 3883 3884 3885  0
 c ind 3886 3887 3888 3889 3890 3891 3892 3893 3894 3895  0
 c ind 3896 3897 3898 3899 3900 3901 3902 3903 3904 3905  0
@@ -497,7 +567,7 @@ c ind 4356 4357 4358 4359 4360 4361 4362 4363 4364 4365  0
 c ind 4366 4367 4368 4369 4370 4371 4372 4373 4374 4375  0
 c ind 4376 4377 4378 4379 4380 4381 4382 4383 4384 4385  0
 c ind 4386 4387 4388 4389 4390 4391 4392 4393 4394  0
-p cnf 4396 18042
+p cnf 4396 18017
 2 -3 -78 -526 -623 0
 -2 623 0
 -2 3 0
@@ -18247,296 +18317,271 @@ p cnf 4396 18042
 -1 2 0
 4395 0
 1 0
-3877 0
+-3877 0
 -3878 0
--3879 0
+3879 0
 -3880 0
 3881 0
 -3882 0
 3883 0
--3884 0
-3885 0
+3884 0
+-3885 0
 3886 0
 3887 0
 -3888 0
 -3889 0
--3890 0
+3890 0
 -3891 0
 3892 0
--3893 0
--3894 0
+3893 0
+3894 0
 -3895 0
 -3896 0
--3897 0
--3898 0
--3899 0
--3900 0
+3897 0
+3898 0
+3899 0
+3900 0
 -3901 0
-3902 0
+-3902 0
 -3903 0
--3904 0
--3905 0
--3906 0
--3907 0
+3904 0
+3905 0
+3906 0
+3907 0
 -3908 0
 -3909 0
 -3910 0
 -3911 0
 -3912 0
 3913 0
--3914 0
+3914 0
 -3915 0
--3916 0
--3917 0
--3918 0
-3919 0
-3920 0
+3916 0
+3917 0
+3918 0
+-3919 0
+-3920 0
 -3921 0
--3922 0
+3922 0
 -3923 0
 3924 0
-3925 0
--3926 0
--3927 0
+-3925 0
+3926 0
+3927 0
 -3928 0
--3929 0
+3929 0
 -3930 0
 -3931 0
 -3932 0
--3933 0
+3933 0
 -3934 0
 3935 0
 -3936 0
 -3937 0
 -3938 0
--3939 0
--3940 0
+3939 0
+3940 0
 -3941 0
--3942 0
--3943 0
+3942 0
+3943 0
 -3944 0
-3945 0
+-3945 0
 -3946 0
--4215 0
--4125 0
-4131 0
-4134 0
--4164 0
-4178 0
-4180 0
--4108 0
-3990 0
-4187 0
--4163 0
-4192 0
-4194 0
--4196 0
-4039 0
--4060 0
--4136 0
-4138 0
-4144 0
-4222 0
-4150 0
-4009 0
-4228 0
-4156 0
-4082 0
-4015 0
-4230 0
-4158 0
--4090 0
--4166 0
--4169 0
--4095 0
-4094 0
-4091 0
-4098 0
--4249 0
--4022 0
--4244 0
-4017 0
--4172 0
--3988 0
-3991 0
--4173 0
-4170 0
-4167 0
-4174 0
--4099 0
--4171 0
--4175 0
--4045 0
--3987 0
-4049 0
-4051 0
-4129 0
-4130 0
--4176 0
-4179 0
-4182 0
-4183 0
--4185 0
-4111 0
-4188 0
-4112 0
-4189 0
--4019 0
-3989 0
-4018 0
--4025 0
--4024 0
--4021 0
-4030 0
-3986 0
--3985 0
--4200 0
-4201 0
-4204 0
-4234 0
-4236 0
-4375 0
-4218 0
-4210 0
-4377 0
-4374 0
--4104 0
--4107 0
--4181 0
--4184 0
-4216 0
-4211 0
-4209 0
-4376 0
-4214 0
-4198 0
--4202 0
-4205 0
--4199 0
 -4203 0
-4212 0
 4207 0
-4206 0
-4208 0
--4242 0
--4113 0
--4190 0
-4013 0
-4232 0
+4201 0
 4007 0
-4226 0
-4001 0
+-4202 0
+4204 0
+4205 0
+-4242 0
+4028 0
+-4237 0
+3990 0
+-4181 0
+4206 0
+-3988 0
+4208 0
+-4162 0
+4188 0
+4183 0
+-4184 0
+-3999 0
+-4218 0
+4209 0
+4212 0
+4189 0
+-4190 0
 4220 0
-4237 0
-4239 0
--4247 0
+-4227 0
+4226 0
+-4009 0
+-4228 0
+4316 0
+-4238 0
+4243 0
+4024 0
+4246 0
+4255 0
+4256 0
+-4240 0
+4250 0
+-4079 0
+-4155 0
+-4233 0
+-4239 0
+4251 0
+-4254 0
+-4236 0
+4035 0
+4269 0
+-4241 0
+-4245 0
+-4023 0
+-4026 0
+-4248 0
+-4252 0
+-4259 0
+-4288 0
+4257 0
+4264 0
+4260 0
+4258 0
+4261 0
+-4262 0
+4267 0
+4266 0
+-4268 0
+-4291 0
+-4304 0
+-4301 0
+-4249 0
+-4311 0
+4321 0
+4265 0
+4270 0
+4272 0
+-4289 0
+-4290 0
+4292 0
+-4278 0
+-4081 0
+-4157 0
+-4235 0
 4295 0
--4243 0
--4066 0
--4246 0
--4142 0
 -4299 0
-4305 0
-4315 0
-4325 0
+-4013 0
+-4232 0
 -4274 0
 -4275 0
-4301 0
-4311 0
-4313 0
-4321 0
-4331 0
-4323 0
-4333 0
-4345 0
-4276 0
-4335 0
--4334 0
--4309 0
+-4273 0
+-4297 0
+-4027 0
+-4307 0
+-4308 0
+4303 0
+-4253 0
 -4319 0
--4379 0
-4266 0
--4384 0
--4389 0
--4278 0
-4267 0
+4312 0
+-4296 0
+-4306 0
+-4322 0
+-4318 0
+-4339 0
+4326 0
+4305 0
+4324 0
+4314 0
+-4325 0
+4313 0
+-4320 0
+4300 0
+-4309 0
+-4328 0
+-4108 0
+-4185 0
+-4315 0
+4310 0
+4276 0
+-4279 0
+4293 0
+-4330 0
+4281 0
+-4332 0
+-4323 0
+-4340 0
+-4333 0
+-4334 0
+-4336 0
+4344 0
+4327 0
+4378 0
+4331 0
 -4277 0
 4280 0
-4255 0
--4352 0
--4250 0
--4251 0
-4248 0
--4254 0
-4245 0
-4252 0
--4027 0
-4257 0
--4253 0
--4238 0
--4240 0
-4258 0
-4260 0
-4261 0
--4259 0
--4262 0
--4263 0
-4380 0
-4382 0
-4371 0
-4387 0
-4385 0
-4393 0
--4241 0
--4268 0
-4256 0
-4265 0
-4269 0
-4270 0
-4284 0
--4271 0
--4368 0
-4283 0
-4272 0
--4273 0
--4338 0
-4285 0
-4286 0
--4394 0
--4370 0
-4281 0
 4282 0
--4341 0
--4344 0
--4279 0
--4340 0
--4343 0
--4347 0
--4336 0
--4348 0
-4342 0
-4349 0
-4356 0
+4343 0
+4347 0
+4341 0
+4348 0
+-4351 0
+-4381 0
+-4342 0
+-4345 0
+-4349 0
+4352 0
+4354 0
+-4377 0
+4357 0
+-4335 0
+-4337 0
+4355 0
+4358 0
+-4356 0
+-4359 0
+4317 0
+-4329 0
+4353 0
+4367 0
+-4374 0
+-4379 0
+-4384 0
+4361 0
 -4346 0
 -4350 0
--4355 0
--4354 0
--4351 0
--4357 0
-4337 0
--4358 0
 -4360 0
--4359 0
--4366 0
+-4271 0
+4366 0
+-4193 0
+-4368 0
+-4370 0
+-4263 0
+-4376 0
+-4380 0
+4383 0
+-4385 0
+-4389 0
+-4338 0
 4363 0
 4364 0
 -4365 0
-4353 0
-4362 0
-4367 0
+4388 0
 4369 0
-4392 0
+-4386 0
+-4391 0
+4302 0
+-4294 0
+4283 0
+4371 0
+-4375 0
+-4382 0
+-4387 0
+-4393 0
+4285 0
+4286 0
+-4390 0
+-4392 0
+-4394 0
 4372 0
-4390 0
--4373 0
--4137 0
+4373 0
+4017 0
