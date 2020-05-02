@@ -94,13 +94,19 @@ Formula Master::manthan_shrink(Formula top){
 	Formula pool(dimension, false);
 	vector<int> value(dimension, 0);
 	Formula critical(dimension, false);
-	vector<vector<int>> parentMap(*max_element(msSolver->yVars.begin(), msSolver->yVars.end()) + 1, vector<int>());
+	int maxYvar = *max_element(msSolver->yVars.begin(), msSolver->yVars.end()) + 2;
+	int maxXvar = *max_element(msSolver->xVars.begin(), msSolver->xVars.end()) + 2;
+	int maxVar = (maxYvar > maxXvar)? maxYvar : maxXvar;
+	if(maxVar < msSolver->vars + 2)
+		maxVar = msSolver->vars + 2;
+	vector<vector<int>> parentMap(maxVar, vector<int>());
 
 	for(int c = 0; c < dimension; c++){
 		if(!top[c]) continue;
 		auto item = make_pair(c,0);
 		for(auto l: msSolver->clauses[c]){
 			int var = abs(l);
+			if(var > msSolver->vars) break; // the activation literal
 			parentMap[var].push_back(c);
 			if(find(msSolver->yVars.begin(), msSolver->yVars.end(),var) != msSolver->yVars.end()){
 				value[c] += msSolver->yVarsPrice[var];
