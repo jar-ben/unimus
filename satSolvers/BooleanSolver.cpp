@@ -444,7 +444,15 @@ vector<bool> BooleanSolver::shrink(std::vector<bool> &f, std::vector<bool> crits
         if(shrink_alg == "default"){
 		vector<bool> mus;
                 try{
+			cout << "crits" << endl;
+			for(int i = 0; i < dimension; i++){
+				if(crits[i])
+					cout << clauses_str[i] << endl;
+			}
+			cout << endl << endl;
+			print_formula(f);
                         mus = shrink_mcsmus(f, crits);
+			cout << "mus size " << count_ones(mus) << endl;
                 } catch (...){
                         //mcsmus sometimes fails so we use muser instead
                         cout << "mcsmus crashed during shrinking, using muser2 instead" << endl;
