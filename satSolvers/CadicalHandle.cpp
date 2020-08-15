@@ -10,8 +10,15 @@ CadicalHandle::CadicalHandle(string filename):BooleanSolver(filename){
         solver = new CaDiCaL::Solver;
         parse(filename);
 
-	//add clauses and variables to the solver;
+	//add soft clauses to the solver;
 	for(auto &clause: clauses){
+                for(auto l: clause){
+			solver->add(l);
+		}
+		solver->add(0);
+	}
+	//add hard clauses to the solver;
+	for(auto &clause: hard_clauses){
                 for(auto l: clause){
 			solver->add(l);
 		}

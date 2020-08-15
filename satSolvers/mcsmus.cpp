@@ -32,6 +32,7 @@ std::vector<Lit> intToLit(std::vector<int> cls){
 }
 
 std::vector<bool> BooleanSolver::shrink_mcsmus(std::vector<bool> &f, std::vector<bool> crits){
+	std::cout << "shrinking mcsmus" << std::endl;
 	setX86FPUPrecision();
 	Wcnf wcnf;
 	std::unique_ptr<BaseSolver> s;
@@ -51,6 +52,9 @@ std::vector<bool> BooleanSolver::shrink_mcsmus(std::vector<bool> &f, std::vector
 	std::vector<int> indexOfClause (f.size(), -1);
 	int cnt = 0;
 	int counter = 0;
+	for(auto &cl: hard_clauses){
+		wcnf.addClause(intToLit(cl), 0);
+	}
 	for(int i = 0; i < f.size(); i++){
 		if(f[i]){
 			if(crits[i]){

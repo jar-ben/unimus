@@ -11,12 +11,14 @@ Master::Master(string filename, string alg, string ssolver){
 	algorithm = alg;
 	sat_solver = ssolver;
 	if(ends_with(filename, "cnf")){
-		cout << "solver: " << sat_solver << endl;
 		if(sat_solver == "glucose"){
+			cout << "using glucose" << endl;
 			satSolver = new GlucoseHandle(filename);
 		}else if(sat_solver == "cadical"){
+			cout << "using cadical" << endl;
 			satSolver = new CadicalHandle(filename);
 		}else{
+			cout << "using minisat" << endl;
 			satSolver = new MSHandle(filename);
 		}
 		domain = "sat";

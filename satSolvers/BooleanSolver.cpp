@@ -17,15 +17,19 @@
 using namespace std;
 
 vector<int> BooleanSolver::convert_clause(string clause){
-        vector<int> ret;
+	vector<int> ret;
         istringstream is(clause);
+	//strip group id
+	if(starts_with(clause, "{")){
+		string pom;
+		is >> pom;
+	}
         int n;
         while(is >> n)
                 ret.push_back(n);
         ret.pop_back();
         return ret;
 }
-
 
 void BooleanSolver::add_clause(vector<int> cl){
         std::sort(cl.begin(), cl.end());
@@ -41,12 +45,25 @@ void BooleanSolver::add_clause(vector<int> cl){
         }
 }
 
-//Parses the input .cnf file
+void BooleanSolver::add_hard_clause(vector<int> cl){
+        std::sort(cl.begin(), cl.end());
+        hard_clauses.push_back(cl);
+        hard_clauses_map[cl] = hard_clauses.size() - 1; //used for manipulation with single MUS extractions (muser2, dmuser)
+        //for(auto &lit: cl){
+        //        if(lit > 0)
+        //                hitmap_pos[lit - 1].push_back(clauses.size() - 1);
+        //        else
+        //                hitmap_neg[(-1 * lit) - 1].push_back(clauses.size() - 1);
+        //}
+}
+
+//Parses the input .cnf or .gcnf file
 //Sets up structures that are common for all instances of BooleanSolver
 //Does not add the clauses and the variables to a particular SAT solver,
 //this is done in the constructor of the particular solver (inherited class of BooleanSolver)
 bool BooleanSolver::parse(string path){
-        ifstream infile(path, ifstream::in);
+	gcnf = false;
+	ifstream infile(path, ifstream::in);
         if (!infile.is_open())
                 print_err("wrong input file");
 
@@ -67,12 +84,17 @@ bool BooleanSolver::parse(string path){
                         cout << "a duplicate clause found in the input formula" << endl;
                         continue;
                 }
+		else if(starts_with(line, "{0} ")){
+			hard_clauses_str.push_back(line);
+		}
+		else if(starts_with(line, "{")){
+			gcnf = true;
+			clauses_str.push_back(line);
+		}
                 else{
                         clauses_str.push_back(line);
-                        clauses_unique_map[line] = clauses_str.size() - 1;
                 }
         }
-        cout << "vars: " << vars << endl;
         hitmap_pos.resize(vars);
         hitmap_neg.resize(vars);
         for(size_t i = 0; i < clauses_str.size(); i++){
@@ -80,6 +102,12 @@ bool BooleanSolver::parse(string path){
                 clause.push_back(vars + i + 1); //control variable
                 add_clause(clause); //add clause to the solver
         }
+        for(size_t i = 0; i < hard_clauses_str.size(); i++){
+                clause = convert_clause(hard_clauses_str[i]);
+                add_hard_clause(clause); //add clause to the solver
+        }
+	cout << "hard clauses: " << hard_clauses.size() << endl;
+	cout << "sof clauses: " << clauses.size() << endl;
 	dimension = clauses.size();
 	srand (time(NULL));
 	rotated_crits = 0;
@@ -89,7 +117,6 @@ bool BooleanSolver::parse(string path){
 
         return true;
 }
-
 BooleanSolver::BooleanSolver(string filename):SatSolver(filename){
 }
 
@@ -635,10 +662,17 @@ std::vector<bool> BooleanSolver::satisfied(std::vector<int> &valuation){
 }
 
 string BooleanSolver::toString(vector<bool> &f){
-        int formulas = std::count(f.begin(), f.end(), true);
+	int f_size = std::count(f.begin(), f.end(), true);
+        int formulas = f_size + hard_clauses.size();
         stringstream result;
-        result << "p cnf " << vars << " " << formulas << "\n";
-        for(int i = 0; i < f.size(); i++)
+	if(gcnf)
+		result << "p gcnf " << vars << " " << formulas << " " << f_size << "\n";
+	else
+		result << "p cnf " << vars << " " << formulas << "\n";
+	for(auto &cl: hard_clauses_str){
+		result << cl << "\n";
+	}
+	for(int i = 0; i < f.size(); i++)
                 if(f[i]){
                         result << clauses_str[i] << "\n";
                 }
