@@ -312,7 +312,7 @@ bool Master::unimusRecRefine(){
 				unimusRec_mark_mus(mus, origin_top, origin_top);
                         foundMUS++;
                 }else{
-                        mark_MSS(seed);
+			block_down(seed);
 			foundMSS++;
                 }
                 seed = explorer->get_unexplored(1, false);
