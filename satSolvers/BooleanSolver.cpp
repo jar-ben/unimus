@@ -16,14 +16,20 @@
 
 using namespace std;
 
+string trimGid(string clause, string &gid){
+	if(!clause[0] == '{')
+		return clause;
+        istringstream is(clause);
+	string cl;
+	is >> gid;
+	getline(is, cl);
+	trim(cl);
+	return cl;
+}
+
 vector<int> BooleanSolver::convert_clause(string clause){
 	vector<int> ret;
         istringstream is(clause);
-	//strip group id
-	if(starts_with(clause, "{")){
-		string pom;
-		is >> pom;
-	}
         int n;
         while(is >> n)
                 ret.push_back(n);
@@ -49,12 +55,12 @@ void BooleanSolver::add_hard_clause(vector<int> cl){
         std::sort(cl.begin(), cl.end());
         hard_clauses.push_back(cl);
         hard_clauses_map[cl] = hard_clauses.size() - 1; //used for manipulation with single MUS extractions (muser2, dmuser)
-        //for(auto &lit: cl){
-        //        if(lit > 0)
-        //                hitmap_pos[lit - 1].push_back(clauses.size() - 1);
-        //        else
-        //                hitmap_neg[(-1 * lit) - 1].push_back(clauses.size() - 1);
-        //}
+        for(auto &lit: cl){
+                if(lit > 0)
+                        hard_hitmap_pos[lit - 1].push_back(hard_clauses.size() - 1);
+                else
+                        hard_hitmap_neg[(-1 * lit) - 1].push_back(hard_clauses.size() - 1);
+        }
 }
 
 //Parses the input .cnf or .gcnf file
@@ -70,6 +76,7 @@ bool BooleanSolver::parse(string path){
         string line;
         vector<int> clause;
         string pom;
+	string gid;
         while (getline(infile, line))
         {
                 if (line[0] == 'p'){
@@ -85,11 +92,13 @@ bool BooleanSolver::parse(string path){
                         continue;
                 }
 		else if(starts_with(line, "{0} ")){
-			hard_clauses_str.push_back(line);
+			hard_clauses_str.push_back(trimGid(line, gid));
+			hard_clauses_gid.push_back(gid);
 		}
 		else if(starts_with(line, "{")){
 			gcnf = true;
-			clauses_str.push_back(line);
+			clauses_str.push_back(trimGid(line, gid));
+			clauses_gid.push_back(gid);
 		}
                 else{
                         clauses_str.push_back(line);
@@ -97,6 +106,8 @@ bool BooleanSolver::parse(string path){
         }
         hitmap_pos.resize(vars);
         hitmap_neg.resize(vars);
+        hard_hitmap_pos.resize(vars);
+        hard_hitmap_neg.resize(vars);
         for(size_t i = 0; i < clauses_str.size(); i++){
                 clause = convert_clause(clauses_str[i]);
                 clause.push_back(vars + i + 1); //control variable
@@ -136,7 +147,6 @@ void print_model(vector<int> model){
 	cout << endl;
 }
 
-
 bool BooleanSolver::lit_occurences(vector<bool> subset, int c2){
 	for(auto l: clauses[c2]){
 		int var = (l > 0)? l : -l;
@@ -146,10 +156,14 @@ bool BooleanSolver::lit_occurences(vector<bool> subset, int c2){
 			for(auto c1: hitmap_pos[var - 1]){ //clauses satisfied by implied negative value of i-th literal
 				if(subset[c1] && c1 != c2){ count++; }
 			}
+			//optional - using hard clauses 
+			count += hard_hitmap_pos[var - 1].size();
 		} else {
 			for(auto c1: hitmap_neg[var - 1]){ //clauses satisfied by implied negative value of i-th literal
 				if(subset[c1] && c1 != c2){ count++; }
 			}
+			//optional - using hard clauses 
+			count += hard_hitmap_neg[var - 1].size();
 		}
 		if(count == 0) return false;
 	}
@@ -444,13 +458,6 @@ vector<bool> BooleanSolver::shrink(std::vector<bool> &f, std::vector<bool> crits
         if(shrink_alg == "default"){
 		vector<bool> mus;
                 try{
-			cout << "crits" << endl;
-			for(int i = 0; i < dimension; i++){
-				if(crits[i])
-					cout << clauses_str[i] << endl;
-			}
-			cout << endl << endl;
-			print_formula(f);
                         mus = shrink_mcsmus(f, crits);
 			cout << "mus size " << count_ones(mus) << endl;
                 } catch (...){
@@ -495,8 +502,11 @@ void BooleanSolver::export_formula_crits(vector<bool> f, string filename, vector
         file = fopen(filename.c_str(), "w");
         if(file == NULL) cout << "failed to open " << filename << ", err: " << strerror(errno) << endl;
 
-        fprintf(file, "p gcnf %d %d %d\n", vars, formulas, formulas);
-        for(int i = 0; i < f.size(); i++)
+        fprintf(file, "p gcnf %d %d %d\n", vars, formulas + hard_clauses.size(), formulas);
+	for(auto &cl: hard_clauses_str){
+		fprintf(file, "{0} %s\n", cl.c_str());
+	}
+	for(int i = 0; i < f.size(); i++)
                 if(f[i] && crits[i]){
 			fprintf(file, "{0} %s\n", clauses_str[i].c_str());
                 }
@@ -516,9 +526,8 @@ vector<bool> BooleanSolver::import_formula_crits(string filename){
         ReMUS::parse_DIMACS(filename, cls);
         for(auto cl: cls){
                 sort(cl.begin(), cl.end());
-                if(clauses_map.count(cl))
+                if(clauses_map.count(cl)) //add only soft clauses (the hard ones are implicit)
                         f[clauses_map[cl]] = true;
-                else { assert(false); }
         }
         return f;
 }
@@ -542,7 +551,8 @@ vector<bool> BooleanSolver::shrink_muser(string input, int hash2){
         muser_out << "./tmp/f_" << hash << "_output";
         imp << "./tmp/f_" << hash << "_mus";
         cmd << "./muser2-para -grp -wf " << imp.str() << " " << input << " > " << muser_out.str();// */ " > /dev/null";
-        int status = system(cmd.str().c_str());
+	cout << cmd.str() << endl;
+	int status = system(cmd.str().c_str());
         if(status < 0){
                 std::cout << "Invalid muser return code" << std::endl; exit(0);
         }
@@ -578,16 +588,24 @@ string BooleanSolver::toString(vector<bool> &f){
 	int f_size = std::count(f.begin(), f.end(), true);
         int formulas = f_size + hard_clauses.size();
         stringstream result;
-	if(gcnf)
+	if(gcnf){
 		result << "p gcnf " << vars << " " << formulas << " " << f_size << "\n";
-	else
-		result << "p cnf " << vars << " " << formulas << "\n";
-	for(auto &cl: hard_clauses_str){
-		result << cl << "\n";
+		for(int i = 0; i < hard_clauses.size(); i++){
+			result << hard_clauses_gid[i] << hard_clauses_str[i] << "\n";
+		}
+		for(int i = 0; i < f.size(); i++){
+			if(f[i]){
+				result << clauses_gid[i] << clauses_str[i] << "\n";
+			}
+		}
 	}
-	for(int i = 0; i < f.size(); i++)
-                if(f[i]){
-                        result << clauses_str[i] << "\n";
-                }
-        return result.str();
+	else{
+		result << "p cnf " << vars << " " << formulas << "\n";
+		for(int i = 0; i < f.size(); i++){
+			if(f[i]){
+				result << clauses_str[i] << "\n";
+			}
+		}
+	}	
+	return result.str();
 }
