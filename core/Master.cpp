@@ -84,8 +84,9 @@ bool Master::is_valid(Formula &formula, bool core, bool grow){
 }
 
 //verify if f is a MUS
-void Master::validate_mus(Formula &f){
+void Master::validate_mus(Formula &f){	
 	cout << "validationg MUS with size " << count_ones(f) << endl;
+	print_formula(f);
 	if(is_valid(f))
 		print_err("the mus is SAT");
 	if(!explorer->isUnexplored(f))

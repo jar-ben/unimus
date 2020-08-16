@@ -45,6 +45,14 @@ GlucoseHandle::GlucoseHandle(string filename):BooleanSolver(filename){
                         msClause.push(GLitoLit(lit));
                 solver->addClause(msClause);
         }
+        
+	//add hard clauses to the solver
+        for(auto &cl: hard_clauses){
+                vec<Lit> msClause;
+                for(auto &lit: cl)
+                        msClause.push(GLitoLit(lit));
+                solver->addClause(msClause);
+        }
 }
 
 GlucoseHandle::~GlucoseHandle(){
