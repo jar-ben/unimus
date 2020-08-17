@@ -470,7 +470,7 @@ string BooleanSolver::toString(vector<bool> &f){
         int formulas = f_size + hard_clauses.size();
         stringstream result;
 	if(gcnf){
-		result << "p gcnf " << vars << " " << formulas << " " << f_size << "\n";
+		result << "p gcnf " << vars << " " << formulas << " " << f.size() << "\n";
 		for(int i = 0; i < hard_clauses.size(); i++){
 			result << hard_clauses_gid[i] << hard_clauses_str[i] << "\n";
 		}
