@@ -48,11 +48,7 @@ int main(int argc, char *argv[]){
 		
 		vector<string> allowedGrows {"default", "cmp", "uwr", "combined", "mcsls", "fixpoint"};
 		TCLAP::ValuesConstraint<string> allowedValsGrow(allowedGrows);
-		TCLAP::ValueArg<std::string> grow("","grow","Specifies the growing algorithm (single MSS/MCS extraction subroutine).",false,"default",&allowedValsGrow);
-		cmd.add(grow);
 
-		TCLAP::ValueArg<int> cmpStrategy("","cmp-strategy","CMP grow strategy.",false,1,"1,2,3 or 4");
-		cmd.add(cmpStrategy);
 		TCLAP::ValueArg<int> recursionDepthLimit("","max-recursion-depth","Affects only the algorithm ReMUS. Sets the depth limit on recursion calls in the algorithm.",false,100,"N+ or -1 for unlimited.");
 		cmd.add(recursionDepthLimit);
 
@@ -66,7 +62,7 @@ int main(int argc, char *argv[]){
 
 		TCLAP::SwitchArg criticalsRotation("","criticals-rotation","Can be used only if the flag -g is not set. Allows to find additional critical constraints based on the already found ones. Use this flag to turn the feature on.", cmd, false);
 
-		TCLAP::UnlabeledValueArg<string>  input( "input_file", "Input file with the extension .cnf and in DIMACS format. See the ./examples/.", true, "", "input_file"  );
+		TCLAP::UnlabeledValueArg<string>  input( "input_file", "Input file with the extension .cnf or .gcnf, and in DIMACS or group DIMACS format, respectively. See the ./examples/.", true, "", "input_file"  );
 		cmd.add(input);
 		cmd.parse(argc, argv);
 
@@ -87,10 +83,8 @@ int main(int argc, char *argv[]){
 		std::string shr = shrink.getValue();
 		if(solver.domain != "sat") shr = "default";
 		solver.satSolver->shrink_alg = shr;
-		solver.satSolver->grow_alg = grow.getValue();
 		solver.get_implies = getImplied.getValue();
 		solver.criticals_rotation = criticalsRotation.getValue(); //criticals_rotation;
-		solver.satSolver->growStrategy = cmpStrategy.getValue();
 		solver.satSolver->mcslsArgs = mcslsArgs.getValue();
 		solver.satSolver->shrinkMining = shrinkMining.getValue();
 		solver.mss_rotation = mssRotation.getValue();
