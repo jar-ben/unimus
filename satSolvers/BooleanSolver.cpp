@@ -87,21 +87,38 @@ bool BooleanSolver::parse(string path){
                 }
                 else if(line[0] == 'c')
                         continue;
-                else if(clauses_unique_map.find(line) != clauses_unique_map.end()){
-                        cout << "a duplicate clause found in the input formula" << endl;
-                        continue;
-                }
 		else if(starts_with(line, "{0} ")){
-			hard_clauses_str.push_back(trimGid(line, gid));
+			string c = trimGid(line, gid);
+                	if(clauses_unique_map.find(c) != clauses_unique_map.end()){
+				cout << "A duplicate clause found in the input formula: " << c << endl;
+			}
+			hard_clauses_str.push_back(c);
 			hard_clauses_gid.push_back(gid);
+			clauses_unique_map[c] = hard_clauses_str.size() - 1;
 		}
 		else if(starts_with(line, "{")){
 			gcnf = true;
-			clauses_str.push_back(trimGid(line, gid));
-			clauses_gid.push_back(gid);
+			string c = trimGid(line, gid);
+                	if(clauses_unique_map.find(c) != clauses_unique_map.end()){
+				cout << "WARNING: A duplicate clause found in the input formula: " << c << endl;
+				cout << "The group id of the duplicated clause is " << gid << endl;
+				cout << "We skip the duplicated clause (only the first instance of the clause will be used during the computation)." << endl;
+				cout << endl;
+			}else{
+				clauses_str.push_back(c);
+				clauses_gid.push_back(gid);
+				clauses_unique_map[c] = clauses_str.size() - 1;
+			}
 		}
                 else{
-                        clauses_str.push_back(line);
+                	if(clauses_unique_map.find(line) != clauses_unique_map.end()){
+				cout << "WARNING: A duplicate clause found in the input formula: " << line << endl;
+				cout << "We skip the duplicate clause (only the first instance of the clause will be used during the computation)." << endl;
+				cout << endl;
+			}else{
+				clauses_str.push_back(line);
+				clauses_unique_map[line] = clauses_str.size() - 1;
+			}
                 }
         }
         hitmap_pos.resize(vars);
@@ -118,7 +135,7 @@ bool BooleanSolver::parse(string path){
                 add_hard_clause(clause); //add clause to the solver
         }
 	cout << "hard clauses: " << hard_clauses.size() << endl;
-	cout << "sof clauses: " << clauses.size() << endl;
+	cout << "soft clauses: " << clauses.size() << endl;
 	dimension = clauses.size();
 	srand (time(NULL));
 	rotated_crits = 0;
@@ -351,24 +368,30 @@ vector<bool> BooleanSolver::shrink(std::vector<bool> &f, Explorer *e, std::vecto
 }
 
 void BooleanSolver::export_formula_crits(vector<bool> f, string filename, vector<bool> crits){
-        int formulas = std::count(f.begin(), f.end(), true);
+        int crits_count = std::count(crits.begin(), crits.end(), true);
+	int soft_count = std::count(f.begin(), f.end(), true) - crits_count;
         FILE *file;
         file = fopen(filename.c_str(), "w");
         if(file == NULL) cout << "failed to open " << filename << ", err: " << strerror(errno) << endl;
 
-        fprintf(file, "p gcnf %d %d %d\n", vars, formulas + hard_clauses.size(), formulas);
+        fprintf(file, "p gcnf %d %d %d\n", vars, soft_count + crits_count + hard_clauses.size(), soft_count);
 	for(auto &cl: hard_clauses_str){
 		fprintf(file, "{0} %s\n", cl.c_str());
 	}
+	if(DBG){ cout << "crit clauses:"; }
 	for(int i = 0; i < f.size(); i++)
                 if(f[i] && crits[i]){
 			fprintf(file, "{0} %s\n", clauses_str[i].c_str());
+			if(DBG){ cout << " " << i; }
                 }
         int group = 1;
+	if(DBG){ cout << endl << "soft clauses:"; }
         for(int i = 0; i < f.size(); i++)
                 if(f[i] && !crits[i]){
                         fprintf(file, "{%d} %s\n", group++, clauses_str[i].c_str());
+			if(DBG){ cout << " " << i; }
                 }
+	if(DBG){ cout << endl; }
         if (fclose(file) == EOF) {
                 cout << "error closing file: " << strerror(errno) << endl;
         }
@@ -378,11 +401,14 @@ vector<bool> BooleanSolver::import_formula_crits(string filename){
         vector<bool> f(dimension, false);
         vector<vector<int>> cls;
         ReMUS::parse_DIMACS(filename, cls);
+	if(DBG){ cout << "clauses in the MUS:";	}
         for(auto cl: cls){
                 sort(cl.begin(), cl.end());
                 if(clauses_map.count(cl)) //add only soft clauses (the hard ones are implicit)
                         f[clauses_map[cl]] = true;
+			if(DBG){ cout << " " << clauses_map[cl]; }
         }
+	if(DBG) cout << endl;
         return f;
 }
 
@@ -405,19 +431,20 @@ vector<bool> BooleanSolver::shrink_muser(string input, int hash2){
         muser_out << "./tmp/f_" << hash << "_output";
         imp << "./tmp/f_" << hash << "_mus";
         cmd << "./muser2-para -grp -wf " << imp.str() << " " << input << " > " << muser_out.str();// */ " > /dev/null";
-	cout << cmd.str() << endl;
+	if(DBG){ cout << cmd.str() << endl; }
 	int status = system(cmd.str().c_str());
         if(status < 0){
                 std::cout << "Invalid muser return code" << std::endl; exit(0);
         }
         imp << ".gcnf";
         vector<bool> mus = import_formula_crits(imp.str());
-        cout << cmd.str() << endl;
 	int sat_calls = muser_output(muser_out.str());
 //      checks += sat_calls;
-        remove(imp.str().c_str());
-        remove(muser_out.str().c_str());
-        remove(input.c_str());
+        if(!DBG){
+		remove(imp.str().c_str());
+		remove(muser_out.str().c_str());
+		remove(input.c_str());
+	}
         return mus;
 }
 

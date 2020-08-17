@@ -96,6 +96,7 @@ int main(int argc, char *argv[]){
 		solver.mss_rotation = mssRotation.getValue();
 		solver.mssRotationLimit = (mssRotationLimit.getValue() >= 0)? mssRotationLimit.getValue() : 1000000;
 		solver.DBG = dbg.getValue();
+		solver.satSolver->DBG = dbg.getValue();
 		solver.enumerate();
 		
 		cout << "Enumeration completed" << endl;

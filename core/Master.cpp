@@ -86,7 +86,6 @@ bool Master::is_valid(Formula &formula, bool core, bool grow){
 //verify if f is a MUS
 void Master::validate_mus(Formula &f){	
 	cout << "validationg MUS with size " << count_ones(f) << endl;
-	print_formula(f);
 	if(is_valid(f))
 		print_err("the mus is SAT");
 	if(!explorer->isUnexplored(f))
@@ -154,6 +153,10 @@ void Master::critical_extension(Formula &f, Formula &crits){
 }
 
 MUS& Master::shrink_formula(Formula &f, Formula crits){
+	if(DBG){
+		if(!explorer->isUnexplored(f))
+			print_err("this seed has been already explored");
+	}
 	int f_size = count_ones(f);
 	chrono::high_resolution_clock::time_point start_time = chrono::high_resolution_clock::now();
 	if(verbose) cout << "shrinking dimension: " << f_size << endl;
@@ -204,6 +207,8 @@ MUS& Master::shrink_formula(Formula &f, Formula crits){
 	auto duration = chrono::duration_cast<chrono::microseconds>( end_time - start_time ).count() / float(1000000);
 	muses.push_back(MUS(mus, duration, muses.size(), f_size));
 	if(verbose) cout << "shrunk via satSolver->shrink" << endl;
+
+	if(DBG && !is_subset(mus, f)){ print_err("The MUS is not a subset of the seed."); }
 		
 	total_shrinks++;
 	total_shrink_time += duration;
