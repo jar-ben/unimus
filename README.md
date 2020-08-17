@@ -4,13 +4,12 @@ UNIMUS is a  tool for online enumeration of minimal unsatisfiable subsets (MUSes
 We distribute this source code under the MIT licence. See ./LICENSE for mode details.
 
 ## Installation
-We use miniSAT as a SAT solver. The code of miniSAT is packed with UNIMUS, however, you still need to install the library zlib which is used by miniSAT. You can install zlib with:
+Before building UNIMUS, you have to first get the zlib library and cadical. As for cadical, follow the instructions at https://github.com/arminbiere/cadical to create the library libcadical.a, and then copy libcadical.a to the folder with UNIMUS. To install zlib, use the following:
 ```
 sudo apt install zlib1g-dev
 ```
 
-Once you have installed zlib, you should be able to build UNIMUS.
-In the main directory (the one where is this README.md file), run:
+To build UNIMUS, run in the main directory (the one where is this README.md file):
 ```
 make
 ```
@@ -49,6 +48,14 @@ The tool UNIMUS originates from our another MUS numeration tool called MUST (htt
 * [5] https://bitbucket.org/anton_belov/muser2
 * [8] https://bitbucket.org/gkatsi/mcsmus
 * [9] Mark H. Liffiton, Alessandro Previti, Ammar Malik, João Marques-Silva: Fast, flexible MUS enumeration. Constraints 21(2), 2016.
+
+## Citation
+If you use UNIMUS in your research, please cite the paper that presented UNIMUS: 
+
+Jaroslav Bendík and Ivana Cerna. "Enumeration of Minimal Unsatisfiable Subsets". Accepted to the 26th International Conference on Principles and Practice of Constraint Programming (CP 2020).
+
+## Group MUS
+If you are interested in finding group MUSes (gMUSes), use UNIMUS from the branch "hard-clauses" (https://github.com/jar-ben/unimus/tree/hard-clauses).
 
 ## Contact
 In case of any troubles, do not hesitate to contact me, Jaroslav Bendik, the developer of the tool, at xbendik=at=fi.muni.cz.
