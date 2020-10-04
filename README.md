@@ -51,8 +51,19 @@ The tool UNIMUS originates from our another MUS numeration tool called MUST (htt
 
 ## Citation
 If you use UNIMUS in your research, please cite the paper that presented UNIMUS: 
-
-Jaroslav Bendík and Ivana Cerna. "Enumeration of Minimal Unsatisfiable Subsets". Accepted to the 26th International Conference on Principles and Practice of Constraint Programming (CP 2020).
+```
+@inproceedings{DBLP:conf/cp/BendikC20,
+  author    = {Jaroslav Bend{\'{\i}}k and
+               Ivana Cern{\'{a}}},
+  title     = {Replication-Guided Enumeration of Minimal Unsatisfiable Subsets},
+  booktitle = {{CP}},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {12333},
+  pages     = {37--54},
+  publisher = {Springer},
+  year      = {2020}
+}
+```
 
 ## Group MUS
 If you are interested in finding group MUSes (gMUSes), use UNIMUS from the branch "hard-clauses" (https://github.com/jar-ben/unimus/tree/hard-clauses).
