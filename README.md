@@ -4,11 +4,20 @@ UNIMUS is a  tool for online enumeration of minimal unsatisfiable subsets (MUSes
 We distribute this source code under the MIT licence. See ./LICENSE for mode details.
 
 ## Installation
-Before building UNIMUS, you have to first get the zlib library and cadical. As for cadical, follow the instructions at https://github.com/arminbiere/cadical to create the library libcadical.a, and then copy libcadical.a to the folder with UNIMUS. To install zlib, use the following:
+Before building UNIMUS, you have to first get the zlib library and cadical. 
+
+### Zlib
+To install zlib, use the following:
 ```
 sudo apt install zlib1g-dev
 ```
 
+### Cadical
+Clone and build cadical from https://github.com/arminbiere/cadical (it does not matter where you put it). 
+Subsequently, copy the file libcadical.a that is located in the cadical/build/ directory into the main directory of UNIMUS (the one with this README.md file). 
+Finally, open the Makefile of UNIMUS (in this directory) and modify the variables CADICAL_SRC and CADICAL_BUILD so that they point to the source and build directories of cadical (in depence on when you have put cadical). The two variables are defined at the the beginning of the Makefile. 
+
+### UNIMUS
 To build UNIMUS, run in the main directory (the one where is this README.md file):
 ```
 make
