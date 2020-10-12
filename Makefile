@@ -1,15 +1,20 @@
+### !!! CHANGE THE FOLLOWING TWO LINES TO CONTAIN THE PATHS TO THE SOURCE AND BUILD DIRECTORIES OF CADICAL !!!
+### also, you should copy the file "libcadical.a" from cadical/build/ to the top folder of UNIMUS (the one with this Makefile)
+CADICAL_SRC = /home/xbendik/bin/cadical/src
+CADICAL_BUILD = /home/xbendik/bin/cadical/build
+###
+
 DIR	= $(shell pwd)
 MINISAT	= $(DIR)/custom_minisat
 GLUCOSE	= $(DIR)/glucose
 MCSMUS	= $(DIR)/mcsmus
-CADICAL = /home/xbendik/bin/cadical/src
 MSAT	= libr
 
-LIBD 	= -L/usr/lib -L/usr/local/lib -L/home/xbendik/bin/cadical/build
+LIBD 	= -L/usr/lib -L/usr/local/lib -L$(CADICAL_BUILD)
 LIBS 	= -lz -lcadical
 LIBS	+= -lstdc++fs
 USR 	= /usr/include
-INC 	= -I $(MCSMUS) -I $(MINISAT) -I $(GLUCOSE) -I $(USR) -I /usr/local/include -I $(DIR) -I $(MCSMUS) -I $(CADICAL)
+INC 	= -I $(MCSMUS) -I $(MINISAT) -I $(GLUCOSE) -I $(USR) -I /usr/local/include -I $(DIR) -I $(MCSMUS) -I $(CADICAL_SRC)
 
 CSRCS	= $(wildcard *.cpp) $(wildcard $(DIR)/algorithms/*.cpp)
 CSRCS	+= $(wildcard $(DIR)/satSolvers/*.cpp) $(wildcard $(DIR)/core/*.cpp)
