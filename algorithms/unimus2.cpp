@@ -69,7 +69,8 @@ Formula Master::unimusRec_propagateRefine(Formula &conflict, Formula &base, vect
 			removed++;
 		}
 		if(c1 < 0 && !needed && c1 != finalOne){
-			hard_toKeep[c1] = false;
+            c1 = (-1 * c1) - 1;
+            hard_toKeep[c1] = false;
 			removed++;
 		}
 	}

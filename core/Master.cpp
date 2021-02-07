@@ -26,10 +26,10 @@ Master::Master(string filename, string alg, string ssolver){
 	else
 		print_err("The input file has to have one of these extensions: .cnf. See example files in ./examples/ folder.");
 	dimension = satSolver->dimension;	
-	cout << "Number of constraints in the input set:" << dimension << endl;
-        explorer = new Explorer(dimension);	
+	if(verbose >= 3) cout << "Number of constraints in the input set:" << dimension << endl;
+    explorer = new Explorer(dimension);	
 	//explorer->satSolver = satSolver;
-        verbose = false;
+    verbose = 2;
 	depthMUS = 0;
 	dim_reduction = 0.5;
 	output_file = "";
@@ -85,7 +85,7 @@ bool Master::is_valid(Formula &formula, bool core, bool grow){
 
 //verify if f is a MUS
 void Master::validate_mus(Formula &f){	
-	cout << "validationg MUS with size " << count_ones(f) << endl;
+	if(verbose >= 3) cout << "validationg MUS with size " << count_ones(f) << endl;
 	if(is_valid(f))
 		print_err("the mus is SAT");
 	if(!explorer->isUnexplored(f))
@@ -159,18 +159,18 @@ MUS& Master::shrink_formula(Formula &f, Formula crits){
 	}
 	int f_size = count_ones(f);
 	chrono::high_resolution_clock::time_point start_time = chrono::high_resolution_clock::now();
-	if(verbose) cout << "shrinking dimension: " << f_size << endl;
+	if(verbose >= 3) cout << "shrinking dimension: " << f_size << endl;
 	f_size = count_ones(f);
 	if(crits.empty()) crits = explorer->critical;
 	if(get_implies){ //get the list of known critical constraints	
 		explorer->getImplied(crits, f);
 		//if(algorithm == "unimus")	
-		if(verbose) cout << "# of known critical constraints before shrinking: " << count_ones(crits) << endl;	
+		if(verbose >= 3) cout << "# of known critical constraints before shrinking: " << count_ones(crits) << endl;	
 		if(criticals_rotation && domain == "sat"){
 			int before = count_ones(crits);
 			BooleanSolver *msSolver = static_cast<BooleanSolver*>(satSolver);
 			msSolver->criticals_rotation(crits, f);
-			if(verbose) cout << "# of found critical constraints by criticals rotation: " << (count_ones(crits) - before) << endl;
+			if(verbose >= 3) cout << "# of found critical constraints by criticals rotation: " << (count_ones(crits) - before) << endl;
 		}
 
 		BooleanSolver *bSolver = static_cast<BooleanSolver*>(satSolver);
@@ -178,17 +178,16 @@ MUS& Master::shrink_formula(Formula &f, Formula crits){
 		float c_crits = count_ones(crits);
 		if(int(c_crits) == f_size){ // each constraint in f is critical for f, i.e. it is a MUS 
 			muses.push_back(MUS(f, -1, muses.size(), f_size)); //-1 duration means skipped shrink
-			if(verbose) cout << "crits.size() = f.size()" << endl;
 			return muses.back();
 		}
 		if((f_size - c_crits < 3) && !is_valid(crits, false, false)){		
 		//if(!is_valid(crits, false, false)){		
 			muses.push_back(MUS(crits, -1, muses.size(), f_size));//-1 duration means skipped shrink
-			if(verbose) cout << "crits are unsat on themself" << endl;
+			if(verbose >= 4)  cout << "crits are unsat on themself" << endl;
 			return muses.back();
 		}
 	}
-	if(verbose) cout << "calling satSolver->shrink with " << count_ones(crits) << " crits" << endl;
+	if(verbose >= 3)cout << "calling satSolver->shrink with " << count_ones(crits) << " crits" << endl;
 	
 	if(DBG){
 		if(is_valid(f)) print_err("shrink_formula: the seed is valid");
@@ -206,7 +205,7 @@ MUS& Master::shrink_formula(Formula &f, Formula crits){
 	chrono::high_resolution_clock::time_point end_time = chrono::high_resolution_clock::now();
 	auto duration = chrono::duration_cast<chrono::microseconds>( end_time - start_time ).count() / float(1000000);
 	muses.push_back(MUS(mus, duration, muses.size(), f_size));
-	if(verbose) cout << "shrunk via satSolver->shrink" << endl;
+	if(verbose >= 3) cout << "shrunk via satSolver->shrink" << endl;
 
 	if(DBG && !is_subset(mus, f)){ print_err("The MUS is not a subset of the seed."); }
 		
@@ -217,12 +216,9 @@ MUS& Master::shrink_formula(Formula &f, Formula crits){
 	//to the average time of shrinking, we attempt to collect singleton MCSes from the mus_intersection
 	float avg_shrink = total_shrink_time / total_shrinks;
 	float avg_sat_check = (unex_sat == 0)? 10000000 : (unex_sat_time/unex_sat);
-	//cout << "avg_shrink " << avg_shrink << ", avg sat: " << avg_sat_check << endl;
-	//cout << "ratio: " << (avg_shrink / avg_sat_check) << endl;
 	bool cheap_sat_checks = (avg_shrink / avg_sat_check) > 5;
 	if(muses.size() > 2 && cheap_sat_checks ){
 		int limit = count_ones(explorer->mus_intersection) / 10;	
-		//cout << "limit: " << limit << endl;
 		for(int i = 0; i < dimension; i++){
 			if(explorer->mus_intersection[i] && !explorer->testedForCriticality[i] && !explorer->critical[i] && mus[i]){
 				Formula seed (dimension, true);
@@ -248,22 +244,30 @@ void Master::mark_MUS(MUS& f, bool block_unex){
 
 	chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
 	auto duration = chrono::duration_cast<chrono::microseconds>( now - initial_time ).count() / float(1000000);
-        if(algorithm == "unibase2") return;
-	cout << "Found MUS #" << muses.size() << ", msses: " << msses.size() <<  ", mus dimension: " << f.dimension;
-	cout << ", checks: " << satSolver->checks << ", time: " << duration;
-	cout << ", unex sat: " << unex_sat << ", unex unsat: " << unex_unsat << ", criticals: " << explorer->criticals;
-	cout << ", intersections: " << std::count(explorer->mus_intersection.begin(), explorer->mus_intersection.end(), true);
-	cout << ", union: " << count_ones(uni) << ", dimension: " << dimension;
-	cout << ", seed dimension: " << f.seed_dimension << ", shrink duration: " << f.duration;
-	cout << ", shrinks: " << satSolver->shrinks << ", unimus rotated: " << unimus_rotated << ", unimus attempts: " << unimus_attempts;
-	cout << ", bit: " << bit;
-	cout << ", stack size: " << unimus_rotation_stack.size();
-	
-	cout << ", critical_extension_saves: " << critical_extension_saves;
-	cout << ", unimus_refines: " << unimus_refines;
-	cout << ", mcsmus saves: " << satSolver->shrinkMinedCrits;
-	//cout << ", unimusRecDepth: " << unimusRecDepth;
-	cout << endl;
+    if(algorithm == "unibase2") return;
+
+    if(verbose >= 2){ 
+        cout << "Found MUS #" << muses.size() << ", msses: " << msses.size() <<  ", mus dimension: " << f.dimension;
+        cout << ", checks: " << satSolver->checks << ", time: " << duration;
+        cout << ", unex sat: " << unex_sat << ", unex unsat: " << unex_unsat << ", criticals: " << explorer->criticals;
+        cout << ", intersections: " << std::count(explorer->mus_intersection.begin(), explorer->mus_intersection.end(), true);
+        cout << ", union: " << count_ones(uni) << ", dimension: " << dimension;
+        cout << ", seed dimension: " << f.seed_dimension << ", shrink duration: " << f.duration;
+        cout << ", shrinks: " << satSolver->shrinks << ", unimus rotated: " << unimus_rotated << ", unimus attempts: " << unimus_attempts;
+        cout << ", bit: " << bit;
+        cout << ", stack size: " << unimus_rotation_stack.size();
+        cout << ", critical_extension_saves: " << critical_extension_saves;
+        cout << ", unimus_refines: " << unimus_refines;
+        cout << ", mcsmus saves: " << satSolver->shrinkMinedCrits;
+        //cout << ", unimusRecDepth: " << unimusRecDepth;
+        cout << endl;
+    }else if(verbose == 1){
+        cout << "MUS ";
+        for(auto c: f.int_mus){
+            cout << c << " ";
+        }
+        cout << endl;
+    }
 
 	if(output_file != "")
 		write_mus_to_file(f);

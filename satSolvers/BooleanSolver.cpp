@@ -330,7 +330,6 @@ vector<bool> BooleanSolver::shrink(std::vector<bool> &f, std::vector<bool> crits
 		vector<bool> mus;
                 try{
                         mus = shrink_mcsmus(f, crits);
-			cout << "mus size " << count_ones(mus) << endl;
                 } catch (...){
                         //mcsmus sometimes fails so we use muser instead
                         cout << "mcsmus crashed during shrinking, using muser2 instead" << endl;

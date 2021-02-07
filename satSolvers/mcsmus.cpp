@@ -45,7 +45,6 @@ std::vector<Lit> intToLit(std::vector<int> cls){
 }
 
 std::vector<bool> BooleanSolver::shrink_mcsmus(std::vector<bool> &f, std::vector<bool> crits){
-	std::cout << "shrinking mcsmus" << std::endl;
 	setX86FPUPrecision();
 	Wcnf wcnf;
 	std::unique_ptr<BaseSolver> s;
