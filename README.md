@@ -18,13 +18,14 @@ Subsequently, copy the file libcadical.a that is located in the cadical/build/ d
 Finally, open the Makefile of UNIMUS (in this directory) and modify the variables CADICAL_SRC and CADICAL_BUILD so that they point to the source and build directories of cadical (in depence on when you have put cadical). The two variables are defined at the the beginning of the Makefile. 
 
 ### UNIMUS
+=======
 To build UNIMUS, run in the main directory (the one where is this README.md file):
 ```
 make
 ```
 
 ## Running our tool
-in the main directory, run "./unimus _file_" where _file_ is an input file of constraints. You can use one of our examples, e.g.:
+In the main directory, run "./unimus _file_" where _file_ is an input file of constraints. You can use one of our examples, e.g.:
 ```
 ./unimus examples/test.cnf
 ./unimus examples/bf1355-228.cnf
@@ -73,9 +74,6 @@ If you use UNIMUS in your research, please cite the paper that presented UNIMUS:
   year      = {2020}
 }
 ```
-
-## Group MUS
-If you are interested in finding group MUSes (gMUSes), use UNIMUS from the branch "hard-clauses" (https://github.com/jar-ben/unimus/tree/hard-clauses).
 
 ## Contact
 In case of any troubles, do not hesitate to contact me, Jaroslav Bendik, the developer of the tool, at xbendik=at=fi.muni.cz.

@@ -16,8 +16,19 @@
 
 using namespace std;
 
+string trimGid(string clause, string &gid){
+	if(!clause[0] == '{')
+		return clause;
+        istringstream is(clause);
+	string cl;
+	is >> gid;
+	getline(is, cl);
+	trim(cl);
+	return cl;
+}
+
 vector<int> BooleanSolver::convert_clause(string clause){
-        vector<int> ret;
+	vector<int> ret;
         istringstream is(clause);
         int n;
         while(is >> n)
@@ -25,7 +36,6 @@ vector<int> BooleanSolver::convert_clause(string clause){
         ret.pop_back();
         return ret;
 }
-
 
 void BooleanSolver::add_clause(vector<int> cl){
         std::sort(cl.begin(), cl.end());
@@ -41,18 +51,32 @@ void BooleanSolver::add_clause(vector<int> cl){
         }
 }
 
-//Parses the input .cnf file
+void BooleanSolver::add_hard_clause(vector<int> cl){
+        std::sort(cl.begin(), cl.end());
+        hard_clauses.push_back(cl);
+        hard_clauses_map[cl] = hard_clauses.size() - 1; //used for manipulation with single MUS extractions (muser2, dmuser)
+        for(auto &lit: cl){
+                if(lit > 0)
+                        hard_hitmap_pos[lit - 1].push_back(hard_clauses.size() - 1);
+                else
+                        hard_hitmap_neg[(-1 * lit) - 1].push_back(hard_clauses.size() - 1);
+        }
+}
+
+//Parses the input .cnf or .gcnf file
 //Sets up structures that are common for all instances of BooleanSolver
 //Does not add the clauses and the variables to a particular SAT solver,
 //this is done in the constructor of the particular solver (inherited class of BooleanSolver)
 bool BooleanSolver::parse(string path){
-        ifstream infile(path, ifstream::in);
+	gcnf = false;
+	ifstream infile(path, ifstream::in);
         if (!infile.is_open())
                 print_err("wrong input file");
 
         string line;
         vector<int> clause;
         string pom;
+	string gid;
         while (getline(infile, line))
         {
                 if (line[0] == 'p'){
@@ -63,23 +87,55 @@ bool BooleanSolver::parse(string path){
                 }
                 else if(line[0] == 'c')
                         continue;
-                else if(clauses_unique_map.find(line) != clauses_unique_map.end()){
-                        cout << "a duplicate clause found in the input formula" << endl;
-                        continue;
-                }
+		else if(starts_with(line, "{0} ")){
+			string c = trimGid(line, gid);
+                	if(clauses_unique_map.find(c) != clauses_unique_map.end()){
+				cout << "A duplicate clause found in the input formula: " << c << endl;
+			}
+			hard_clauses_str.push_back(c);
+			hard_clauses_gid.push_back(gid);
+			clauses_unique_map[c] = hard_clauses_str.size() - 1;
+		}
+		else if(starts_with(line, "{")){
+			gcnf = true;
+			string c = trimGid(line, gid);
+                	if(clauses_unique_map.find(c) != clauses_unique_map.end()){
+				cout << "WARNING: A duplicate clause found in the input formula: " << c << endl;
+				cout << "The group id of the duplicated clause is " << gid << endl;
+				cout << "We skip the duplicated clause (only the first instance of the clause will be used during the computation)." << endl;
+				cout << endl;
+			}else{
+				clauses_str.push_back(c);
+				clauses_gid.push_back(gid);
+				clauses_unique_map[c] = clauses_str.size() - 1;
+			}
+		}
                 else{
-                        clauses_str.push_back(line);
-                        clauses_unique_map[line] = clauses_str.size() - 1;
+                	if(clauses_unique_map.find(line) != clauses_unique_map.end()){
+				cout << "WARNING: A duplicate clause found in the input formula: " << line << endl;
+				cout << "We skip the duplicate clause (only the first instance of the clause will be used during the computation)." << endl;
+				cout << endl;
+			}else{
+				clauses_str.push_back(line);
+				clauses_unique_map[line] = clauses_str.size() - 1;
+			}
                 }
         }
-        cout << "vars: " << vars << endl;
         hitmap_pos.resize(vars);
         hitmap_neg.resize(vars);
+        hard_hitmap_pos.resize(vars);
+        hard_hitmap_neg.resize(vars);
         for(size_t i = 0; i < clauses_str.size(); i++){
                 clause = convert_clause(clauses_str[i]);
                 clause.push_back(vars + i + 1); //control variable
                 add_clause(clause); //add clause to the solver
         }
+        for(size_t i = 0; i < hard_clauses_str.size(); i++){
+                clause = convert_clause(hard_clauses_str[i]);
+                add_hard_clause(clause); //add clause to the solver
+        }
+	cout << "hard clauses: " << hard_clauses.size() << endl;
+	cout << "soft clauses: " << clauses.size() << endl;
 	dimension = clauses.size();
 	srand (time(NULL));
 	rotated_crits = 0;
@@ -89,7 +145,6 @@ bool BooleanSolver::parse(string path){
 
         return true;
 }
-
 BooleanSolver::BooleanSolver(string filename):SatSolver(filename){
 }
 
@@ -109,7 +164,6 @@ void print_model(vector<int> model){
 	cout << endl;
 }
 
-
 bool BooleanSolver::lit_occurences(vector<bool> subset, int c2){
 	for(auto l: clauses[c2]){
 		int var = (l > 0)? l : -l;
@@ -119,160 +173,18 @@ bool BooleanSolver::lit_occurences(vector<bool> subset, int c2){
 			for(auto c1: hitmap_pos[var - 1]){ //clauses satisfied by implied negative value of i-th literal
 				if(subset[c1] && c1 != c2){ count++; }
 			}
+			//optional - using hard clauses 
+			count += hard_hitmap_pos[var - 1].size();
 		} else {
 			for(auto c1: hitmap_neg[var - 1]){ //clauses satisfied by implied negative value of i-th literal
 				if(subset[c1] && c1 != c2){ count++; }
 			}
+			//optional - using hard clauses 
+			count += hard_hitmap_neg[var - 1].size();
 		}
 		if(count == 0) return false;
 	}
 	return true;
-}
-
-
-vector<bool> BooleanSolver::propagateToUnsat(vector<bool> base, vector<bool> cover, vector<int> implied){
-	queue<int> toPropagate;
-	for(auto l: implied)
-		toPropagate.push(l);
-	vector<bool> conflict = base;
-	vector<int> lits_left (dimension,0);
-	for(int i = 0 ; i < dimension; i++){
-		lits_left[i] = clauses[i].size() - 1; // -1 because there is the activation literal
-	}
-	vector<bool> satisfied(dimension, false);
-	vector<bool> setup(vars + 1, false);
-	vector<bool> value(vars + 1, false);
-	while(!toPropagate.empty()){
-		auto l = toPropagate.front();
-		toPropagate.pop();
-		int var = (l > 0)? l : -l;
-		if(setup[var])
-			continue;
-		setup[var] = true;
-		value[var] = l < 0;
-		if(l < 0){
-			for(auto c1: hitmap_neg[var - 1]){ //clauses satisfied by implied negative value of i-th literal
-				satisfied[c1] = true;
-			}
-			for(auto c1: hitmap_pos[var - 1]){ //trim clauses that contain positive i-th literal
-				if(satisfied[c1] || !cover[c1]) continue;
-				lits_left[c1]--;
-				if(lits_left[c1] == 1){
-					for(auto lit: clauses[c1]){
-						if(lit >= vars) break; //the activation literal
-						int var2 = (lit > 0)? lit : -lit;
-						if(!setup[var2]){
-							toPropagate.push(lit);
-							implied.push_back(lit);
-							break;
-						}
-					}
-					conflict[c1] = true;
-				}
-				if(lits_left[c1] == 0){
-					conflict[c1] = true;
-					return conflict;
-				}
-			}
-		}else{
-			for(auto c1: hitmap_pos[var - 1]){ //clauses satisfied by implied negative value of i-th literal
-				satisfied[c1] = true;
-			}
-			for(auto c1: hitmap_neg[var - 1]){ //trim clauses that contain positive i-th literal
-				if(satisfied[c1] || !cover[c1]) continue;
-				lits_left[c1]--;
-				if(lits_left[c1] == 1){
-					for(auto lit: clauses[c1]){
-						if(lit >= vars) break; //the activation literal
-						int var2 = (lit > 0)? lit : -lit;
-						if(!setup[var2]){
-							toPropagate.push(lit);
-							implied.push_back(lit);
-							break;
-						}
-					}
-					conflict[c1] = true;
-				}
-				if(lits_left[c1] == 0){
-					conflict[c1] = true;
-					return conflict;
-				}
-			}
-		}
-	}
-	return vector<bool>();
-}
-vector<int> BooleanSolver::get_implied(vector<bool> mus, int c){
-	if(!mus[c]) print_err("c is not in mus");
-	mus[c] = false;
-	vector<int> lits_left (dimension,0);
-	for(int i = 0 ; i < dimension; i++){
-		lits_left[i] = clauses[i].size() - 1; // -1 because there is the activation literal
-	}
-	vector<bool> satisfied(dimension, false);
-	queue<int> to_propagate;
-	vector<bool> setup(vars + 1, false);
-	vector<bool> value(vars + 1, false);
-	vector<int> model;
-	for(auto l: clauses[c]){
-		int var = (l > 0)? l : -l;
-		if(var <= vars){
-			to_propagate.push(-l);
-			model.push_back(-l);
-		}
-	}
-	while(!to_propagate.empty()){
-		auto l = to_propagate.front();
-		to_propagate.pop();
-		int var = (l > 0)? l : -l;
-		if(setup[var])
-			continue;
-		setup[var] = true;
-		value[var] = l < 0;
-		model.push_back(l);
-		if(l < 0){
-			for(auto c1: hitmap_neg[var - 1]){ //clauses satisfied by implied negative value of i-th literal
-				satisfied[c1] = true;
-			}
-			for(auto c1: hitmap_pos[var - 1]){ //trim clauses that contain positive i-th literal
-				if(!mus[c1] || satisfied[c1]) continue;
-				lits_left[c1]--;
-				if(lits_left[c1] == 1){
-					for(auto lit: clauses[c1]){
-						int var2 = (lit > 0)? lit : -lit;
-						if(!setup[var2]){
-							to_propagate.push(lit);
-							break;
-						}
-					}
-				}
-				if(lits_left[c1] == 0){
-					print_err("conflict during propagation");
-				}
-			}
-		}else{
-			for(auto c1: hitmap_pos[var - 1]){ //clauses satisfied by implied negative value of i-th literal
-				satisfied[c1] = true;
-			}
-			for(auto c1: hitmap_neg[var - 1]){ //trim clauses that contain positive i-th literal
-				if(!mus[c1] || satisfied[c1]) continue;
-				lits_left[c1]--;
-				if(lits_left[c1] == 1){
-					for(auto lit: clauses[c1]){
-						int var2 = (lit > 0)? lit : -lit;
-						if(!setup[var2]){
-							to_propagate.push(lit);
-							break;
-						}
-					}
-				}
-				if(lits_left[c1] == 0){
-					print_err("conflict during propagation");
-				}
-			}
-		}
-	}
-	return model;
 }
 
 void BooleanSolver::compute_flip_edges(int c){
@@ -455,21 +367,30 @@ vector<bool> BooleanSolver::shrink(std::vector<bool> &f, Explorer *e, std::vecto
 }
 
 void BooleanSolver::export_formula_crits(vector<bool> f, string filename, vector<bool> crits){
-        int formulas = std::count(f.begin(), f.end(), true);
+        int crits_count = std::count(crits.begin(), crits.end(), true);
+	int soft_count = std::count(f.begin(), f.end(), true) - crits_count;
         FILE *file;
         file = fopen(filename.c_str(), "w");
         if(file == NULL) cout << "failed to open " << filename << ", err: " << strerror(errno) << endl;
 
-        fprintf(file, "p gcnf %d %d %d\n", vars, formulas, formulas);
-        for(int i = 0; i < f.size(); i++)
+        fprintf(file, "p gcnf %d %d %d\n", vars, soft_count + crits_count + hard_clauses.size(), soft_count);
+	for(auto &cl: hard_clauses_str){
+		fprintf(file, "{0} %s\n", cl.c_str());
+	}
+	if(DBG){ cout << "crit clauses:"; }
+	for(int i = 0; i < f.size(); i++)
                 if(f[i] && crits[i]){
 			fprintf(file, "{0} %s\n", clauses_str[i].c_str());
+			if(DBG){ cout << " " << i; }
                 }
         int group = 1;
+	if(DBG){ cout << endl << "soft clauses:"; }
         for(int i = 0; i < f.size(); i++)
                 if(f[i] && !crits[i]){
                         fprintf(file, "{%d} %s\n", group++, clauses_str[i].c_str());
+			if(DBG){ cout << " " << i; }
                 }
+	if(DBG){ cout << endl; }
         if (fclose(file) == EOF) {
                 cout << "error closing file: " << strerror(errno) << endl;
         }
@@ -479,12 +400,14 @@ vector<bool> BooleanSolver::import_formula_crits(string filename){
         vector<bool> f(dimension, false);
         vector<vector<int>> cls;
         ReMUS::parse_DIMACS(filename, cls);
+	if(DBG){ cout << "clauses in the MUS:";	}
         for(auto cl: cls){
                 sort(cl.begin(), cl.end());
-                if(clauses_map.count(cl))
+                if(clauses_map.count(cl)) //add only soft clauses (the hard ones are implicit)
                         f[clauses_map[cl]] = true;
-                else { assert(false); }
+			if(DBG){ cout << " " << clauses_map[cl]; }
         }
+	if(DBG) cout << endl;
         return f;
 }
 
@@ -507,116 +430,23 @@ vector<bool> BooleanSolver::shrink_muser(string input, int hash2){
         muser_out << "./tmp/f_" << hash << "_output";
         imp << "./tmp/f_" << hash << "_mus";
         cmd << "./muser2-para -grp -wf " << imp.str() << " " << input << " > " << muser_out.str();// */ " > /dev/null";
-        int status = system(cmd.str().c_str());
+	if(DBG){ cout << cmd.str() << endl; }
+	int status = system(cmd.str().c_str());
         if(status < 0){
                 std::cout << "Invalid muser return code" << std::endl; exit(0);
         }
         imp << ".gcnf";
         vector<bool> mus = import_formula_crits(imp.str());
-        cout << cmd.str() << endl;
 	int sat_calls = muser_output(muser_out.str());
 //      checks += sat_calls;
-        remove(imp.str().c_str());
-        remove(muser_out.str().c_str());
-        remove(input.c_str());
+        if(!DBG){
+		remove(imp.str().c_str());
+		remove(muser_out.str().c_str());
+		remove(input.c_str());
+	}
         return mus;
 }
 
-std::vector<bool> BooleanSolver::grow(std::vector<bool> &f, std::vector<bool> conflicts){
-        grows++;
-        if(grow_alg == "default"){
-                return SatSolver::grow(f, conflicts);
-        }else if(grow_alg == "uwr"){
-                return grow_uwrmaxsat(f, conflicts);
-        }else if(grow_alg == "mcsls"){
-                std::vector<std::vector<bool>> ms = growMultiple(f, conflicts, 1);
-                if(!ms.empty()) // there is a chance that mcsls fail; in such a case, we proceed with grow_cmp
-                        return ms.back();
-        }
-        return grow_cmp(f, conflicts);
-}
-
-std::vector<bool> BooleanSolver::grow_cmp(std::vector<bool> &f, std::vector<bool> &conflicts){
-        cout << "growing cmp" << endl;
-        stringstream ex;
-        ex << "./tmp/f_" << hash << ".wcnf";
-        vector<int> mapa = export_formula_wcnf(f, conflicts, ex.str());
-        stringstream cmd;
-        cmd << "./cmp_linux -strategyCoMss=" << growStrategy << " " << ex.str();
-        string result = exec(cmd.str().c_str());
-
-        std::string line;
-        bool reading = false;
-        std::vector<int> res_mcs;
-        std::istringstream res(result);
-        while (std::getline(res, line)) {
-                if (line.find("UNSATISFIABLE") != std::string::npos)
-                        reading = true;
-                else if(reading && line[0] == 'v'){
-                        line.erase(0, 2);
-                        res_mcs = convert_clause(line);
-                }
-        }
-        cout << "mcs size: " << res_mcs.size() << endl;
-        if(!reading)
-                print_err("cmp failed to find a mcs");
-        vector<bool> mss(dimension, true);
-        for(int i = 0; i < dimension; i++)
-                if(conflicts[i])
-                        mss[i] = false;
-        for(auto l:res_mcs){
-                mss[mapa[l - 1]] = false;
-        }
-        return mss;
-}
-
-std::vector<bool> BooleanSolver::grow_uwrmaxsat(std::vector<bool> &f, std::vector<bool> &conflicts){
-        stringstream ex;
-        ex << "./tmp/uwr_" << hash << ".wcnf";
-        vector<int> mapa = export_formula_wcnf(f, conflicts, ex.str());
-        stringstream cmd;
-        cmd << "./uwrmaxsat -no-msu -m -v0 " << ex.str();
-        string result = exec(cmd.str().c_str());
-
-        std::string line;
-        std::vector<int> res_vars;
-        std::istringstream res(result);
-        while (std::getline(res, line)) {
-                if(line[0] == 'v' && line[1] == ' '){
-                        line.erase(0, 2);
-                        istringstream is(line);
-                        int n;
-                        while(is >> n)
-                                res_vars.push_back(n);
-                }
-        }
-        return satisfied(res_vars);
-}
-
-vector<int> BooleanSolver::export_formula_wcnf(std::vector<bool> f, std::vector<bool> &conflicts, std::string filename){
-        int formulas = dimension - std::count(conflicts.begin(), conflicts.end(), true);
-        int hard = std::count(f.begin(), f.end(), true);
-        int hh = dimension * dimension;
-
-        FILE *file;
-        file = fopen(filename.c_str(), "w");
-        if(file == NULL) cout << "failed to open " << filename << ", err: " << strerror(errno) << endl;
-        vector<int> mapa;
-        fprintf(file, "p wcnf %d %d %d\n", vars, formulas, hh);
-        for(int i = 0; i < f.size(); i++){
-                if(f[i]){
-                        fprintf(file, "%d %s\n", hh, clauses_str[i].c_str());
-                        mapa.push_back(i);
-                }else if(!f[i] && !conflicts[i]){
-                        fprintf(file, "1 %s\n", clauses_str[i].c_str());
-                        mapa.push_back(i);
-                }
-        }
-        if (fclose(file) == EOF) {
-                cout << "error closing file: " << strerror(errno) << endl;
-        }
-        return mapa;
-}
 
 std::vector<bool> BooleanSolver::satisfied(std::vector<int> &valuation){
         std::vector<bool> result(dimension, false);
@@ -635,12 +465,27 @@ std::vector<bool> BooleanSolver::satisfied(std::vector<int> &valuation){
 }
 
 string BooleanSolver::toString(vector<bool> &f){
-        int formulas = std::count(f.begin(), f.end(), true);
+	int f_size = std::count(f.begin(), f.end(), true);
+        int formulas = f_size + hard_clauses.size();
         stringstream result;
-        result << "p cnf " << vars << " " << formulas << "\n";
-        for(int i = 0; i < f.size(); i++)
-                if(f[i]){
-                        result << clauses_str[i] << "\n";
-                }
-        return result.str();
+	if(gcnf){
+		result << "p gcnf " << vars << " " << formulas << " " << f.size() << "\n";
+		for(int i = 0; i < hard_clauses.size(); i++){
+			result << hard_clauses_gid[i] << hard_clauses_str[i] << "\n";
+		}
+		for(int i = 0; i < f.size(); i++){
+			if(f[i]){
+				result << clauses_gid[i] << clauses_str[i] << "\n";
+			}
+		}
+	}
+	else{
+		result << "p cnf " << vars << " " << formulas << "\n";
+		for(int i = 0; i < f.size(); i++){
+			if(f[i]){
+				result << clauses_str[i] << "\n";
+			}
+		}
+	}	
+	return result.str();
 }

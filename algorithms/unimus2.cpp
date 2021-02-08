@@ -35,8 +35,9 @@ bool Master::unimusRec_isAvailable(int c, Formula &subset, vector<vector<int>> &
 }
 
 Formula Master::unimusRec_propagateRefine(Formula &conflict, Formula &base, vector<pair<int,int>> &implied){
-	Formula toKeep(dimension, true);
 	BooleanSolver *bSolver = static_cast<BooleanSolver*>(satSolver);        
+	Formula toKeep(dimension, true);
+	Formula hard_toKeep(bSolver->hard_clauses.size(), true);
 	int finalOne = implied.back().first;
 	int removed = 0;
 	for(int i = implied.size() - 2; i >= 0; i--){
@@ -45,15 +46,31 @@ Formula Master::unimusRec_propagateRefine(Formula &conflict, Formula &base, vect
 		int lit = implied[i].second;
 		for(int j = i + 1; j < implied.size(); j++){
 			int c2 = implied[j].first;
-			if(!toKeep[c2]) continue;
-			vector<int> &cl = bSolver->clauses[c2];
-			if(find(cl.begin(), cl.end(), -lit) != cl.end()){
-				needed = true;
-				break;
-			}		
+			if(c2 >= 0){ //a soft clause
+				if(!toKeep[c2]) continue;
+				vector<int> &cl = bSolver->clauses[c2];
+				if(find(cl.begin(), cl.end(), -lit) != cl.end()){
+					needed = true;
+					break;
+				}	
+			}else{ //a hard clause
+				c2 = (-1 * c2) - 1;
+				if(!hard_toKeep[c2]) continue;
+				vector<int> &cl = bSolver->hard_clauses[c2];
+				if(find(cl.begin(), cl.end(), -lit) != cl.end()){
+					needed = true;
+					break;
+				}	
+				
+			}	
 		}
-		if(!needed && !base[c1] && c1 != finalOne){
+		if(c1 >= 0 && !needed && !base[c1] && c1 != finalOne){
 			toKeep[c1] = false;
+			removed++;
+		}
+		if(c1 < 0 && !needed && c1 != finalOne){
+            c1 = (-1 * c1) - 1;
+            hard_toKeep[c1] = false;
 			removed++;
 		}
 	}
@@ -63,6 +80,7 @@ Formula Master::unimusRec_propagateRefine(Formula &conflict, Formula &base, vect
 	}
 	if(DBG){
 		if(is_valid(conflict)) print_err("satisfiable seed after unimusRec_propagateRefine()");
+		cout << "seed from propagation, unsat" << endl;
 	}
 
 	return conflict;
@@ -78,7 +96,12 @@ Formula Master::unimusRec_propagateToUnsat(Formula base, Formula cover, vector<p
         for(int i = 0 ; i < dimension; i++){
                 lits_left[i] = bSolver->clauses[i].size() - 1; // -1 because there is the activation literal
         }
+        vector<int> hard_lits_left (bSolver->hard_clauses.size(),0);
+        for(int i = 0 ; i < hard_lits_left.size(); i++){
+                hard_lits_left[i] = bSolver->hard_clauses[i].size();
+        }
         vector<bool> satisfied(dimension, false);
+        vector<bool> hard_satisfied(bSolver->hard_clauses.size(), false);
         vector<bool> setup(bSolver->vars + 1, false);
         vector<bool> value(bSolver->vars + 1, false);
         int added = 0;
@@ -94,6 +117,27 @@ Formula Master::unimusRec_propagateToUnsat(Formula base, Formula cover, vector<p
                 setup[var] = true;
                 value[var] = l < 0;
                 if(l < 0){
+                        for(auto c1: bSolver->hard_hitmap_neg[var - 1]){ //clauses satisfied by implied negative value of i-th literal
+                                hard_satisfied[c1] = true;
+                        }
+                        for(auto c1: bSolver->hard_hitmap_pos[var - 1]){ //trim clauses that contain positive i-th literal
+                                if(hard_satisfied[c1]) continue;
+                                hard_lits_left[c1]--;
+                                if(hard_lits_left[c1] == 1){
+                                        for(auto lit: bSolver->hard_clauses[c1]){
+                                                int var2 = (lit > 0)? lit : -lit;
+                                                if(!setup[var2]){
+                                                        toPropagate.push(lit);
+                                                        implied.push_back(make_pair(-1 * (c1 + 1), lit));
+                                                        break;
+                                                }
+                                        }
+                                }
+                                if(hard_lits_left[c1] == 0){
+                                        implied.push_back(make_pair(-1 * (c1 + 1), 0));
+					return unimusRec_propagateRefine(conflict, base, implied);
+                                }
+                        }
                         for(auto c1: bSolver->hitmap_neg[var - 1]){ //clauses satisfied by implied negative value of i-th literal
                                 satisfied[c1] = true;
                         }
@@ -120,6 +164,27 @@ Formula Master::unimusRec_propagateToUnsat(Formula base, Formula cover, vector<p
                                 }
                         }
                 }else{
+                        for(auto c1: bSolver->hard_hitmap_pos[var - 1]){ //clauses satisfied by implied negative value of i-th literal
+                                hard_satisfied[c1] = true;
+                        }
+                        for(auto c1: bSolver->hard_hitmap_neg[var - 1]){ //trim clauses that contain positive i-th literal
+                                if(hard_satisfied[c1]) continue;
+                                hard_lits_left[c1]--;
+                                if(hard_lits_left[c1] == 1){
+                                        for(auto lit: bSolver->hard_clauses[c1]){
+                                                int var2 = (lit > 0)? lit : -lit;
+                                                if(!setup[var2]){
+                                                        implied.push_back(make_pair(-1 * (c1 + 1), lit));
+                                                        toPropagate.push(lit);
+                                                        break;
+                                                }
+                                        }
+                                }
+                                if(hard_lits_left[c1] == 0){
+                                        implied.push_back(make_pair(-1 * (c1 + 1), 0));
+					return unimusRec_propagateRefine(conflict, base, implied);
+                                }
+                        }
                         for(auto c1: bSolver->hitmap_pos[var - 1]){ //clauses satisfied by implied negative value of i-th literal
                                 satisfied[c1] = true;
                         }
@@ -312,7 +377,7 @@ bool Master::unimusRecRefine(){
 				unimusRec_mark_mus(mus, origin_top, origin_top);
                         foundMUS++;
                 }else{
-                        mark_MSS(seed);
+			block_down(seed);
 			foundMSS++;
                 }
                 seed = explorer->get_unexplored(1, false);

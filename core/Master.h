@@ -28,7 +28,7 @@ public:
 	int dimension; //the number of constraints
 	string algorithm; //MUS enumeration algorithm to be used
 	int isValidExecutions;
-	bool verbose; //TODO: make it int based 
+	int verbose;
 	string output_file;
 	bool validate_mus_c;
 	float mus_approx;
@@ -66,17 +66,8 @@ public:
 	void block_down(Formula f);
 	void block_up(Formula f);
 	void mark_MUS(MUS& m, bool block = true);
-	void mark_MSS(MSS m, bool block = true);
-	void mark_MSS(Formula m, bool block = true);
-	void mark_MSS_executive(MSS m, bool block = true);
 	MUS& shrink_formula(Formula& f, Formula crits = Formula());
-	MSS grow_formula(Formula& f, Formula conflicts = Formula());
-	vector<MSS> grow_formulas(Formula& f, Formula conflicts = Formula(), int limit = 1);
-	void grow_combined(Formula &f, Formula conflicts = Formula());
-	int grow_hitting_extension(Formula &mss, int c1);
-	void grow_fixpoint(Formula &f);
 	void write_mus_to_file(MUS& f);
-	void write_mss_to_file(MSS& f);
 	void validate_mus(Formula &f);
 	void validate_mss(Formula &f);
 	void enumerate();

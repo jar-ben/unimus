@@ -38,8 +38,9 @@ int main(int argc, char *argv[]){
 
 		TCLAP::SwitchArg conflictsNegation("","conflicts-negation","Negate known conflicting clauses during satsolver.solve() calls.", cmd, false);
 		TCLAP::SwitchArg mssRotation("","mss-rotation","Use mss-rotation technique", cmd, false);
-		TCLAP::SwitchArg verbose("v","verbose","Verbose output", cmd, false);
-		TCLAP::SwitchArg dbg("","dbg","Debugging mode", cmd, false);
+        TCLAP::ValueArg<int> verbose("v","verbose","Verbose output", false, 2, "A positive integer value.");
+		cmd.add(verbose);
+        TCLAP::SwitchArg dbg("","dbg","Debugging mode", cmd, false);
 		TCLAP::SwitchArg shrinkMining("","shrink-mining","Allows mcsmus to mine critical clauses from Explorer.", cmd, false);
 		vector<string> allowedShrinks {"default", "muser", "custom", "extension"};
 		TCLAP::ValuesConstraint<string> allowedValsShrink(allowedShrinks);
@@ -48,11 +49,7 @@ int main(int argc, char *argv[]){
 		
 		vector<string> allowedGrows {"default", "cmp", "uwr", "combined", "mcsls", "fixpoint"};
 		TCLAP::ValuesConstraint<string> allowedValsGrow(allowedGrows);
-		TCLAP::ValueArg<std::string> grow("","grow","Specifies the growing algorithm (single MSS/MCS extraction subroutine).",false,"default",&allowedValsGrow);
-		cmd.add(grow);
 
-		TCLAP::ValueArg<int> cmpStrategy("","cmp-strategy","CMP grow strategy.",false,1,"1,2,3 or 4");
-		cmd.add(cmpStrategy);
 		TCLAP::ValueArg<int> recursionDepthLimit("","max-recursion-depth","Affects only the algorithm ReMUS. Sets the depth limit on recursion calls in the algorithm.",false,100,"N+ or -1 for unlimited.");
 		cmd.add(recursionDepthLimit);
 
@@ -66,7 +63,7 @@ int main(int argc, char *argv[]){
 
 		TCLAP::SwitchArg criticalsRotation("","criticals-rotation","Can be used only if the flag -g is not set. Allows to find additional critical constraints based on the already found ones. Use this flag to turn the feature on.", cmd, false);
 
-		TCLAP::UnlabeledValueArg<string>  input( "input_file", "Input file with the extension .cnf and in DIMACS format. See the ./examples/.", true, "", "input_file"  );
+		TCLAP::UnlabeledValueArg<string>  input( "input_file", "Input file with the extension .cnf or .gcnf, and in DIMACS or group DIMACS format, respectively. See the ./examples/.", true, "", "input_file"  );
 		cmd.add(input);
 		cmd.parse(argc, argv);
 
@@ -87,15 +84,14 @@ int main(int argc, char *argv[]){
 		std::string shr = shrink.getValue();
 		if(solver.domain != "sat") shr = "default";
 		solver.satSolver->shrink_alg = shr;
-		solver.satSolver->grow_alg = grow.getValue();
 		solver.get_implies = getImplied.getValue();
 		solver.criticals_rotation = criticalsRotation.getValue(); //criticals_rotation;
-		solver.satSolver->growStrategy = cmpStrategy.getValue();
 		solver.satSolver->mcslsArgs = mcslsArgs.getValue();
 		solver.satSolver->shrinkMining = shrinkMining.getValue();
 		solver.mss_rotation = mssRotation.getValue();
 		solver.mssRotationLimit = (mssRotationLimit.getValue() >= 0)? mssRotationLimit.getValue() : 1000000;
 		solver.DBG = dbg.getValue();
+		solver.satSolver->DBG = dbg.getValue();
 		solver.enumerate();
 		
 		cout << "Enumeration completed" << endl;
