@@ -18,7 +18,6 @@ Subsequently, copy the file libcadical.a that is located in the cadical/build/ d
 Finally, open the Makefile of UNIMUS (in this directory) and modify the variables CADICAL_SRC and CADICAL_BUILD so that they point to the source and build directories of cadical (in depence on when you have put cadical). The two variables are defined at the the beginning of the Makefile. 
 
 ### UNIMUS
-=======
 To build UNIMUS, run in the main directory (the one where is this README.md file):
 ```
 make
