@@ -1,4 +1,6 @@
-c 3 MUSes: 2 of size 2, 1 of size 3
+c "p gcnf 2 5 4" means that there are 2 variables, 5 clauses, and 4 soft clauses
+c clauses with group {0} are the hard clauses, the other are soft
+c there 2 MUSes (assuming the hard clause): {1, -1} and {1, 2, -2}
 p gcnf 2 5 4
 {0} 1 0
 {1} -1 0
