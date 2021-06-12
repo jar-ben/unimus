@@ -502,6 +502,8 @@ public:
     void addMinableBlockDown(vector<int> &block); //JB: used for mining critical clauses
     int minedCriticals{0}; //JB: used for mining critical clauses
     bool conflictMining{false}; //Control variable (switch) that enables the mining (in default false, i.s. the mining is disabled)
+    vector<model_t> mcsmus_models; //JB: used to store all models identified by mcsmus
+    bool mcsmus_store_models{false};
 
  protected:
 

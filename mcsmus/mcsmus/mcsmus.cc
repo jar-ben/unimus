@@ -224,7 +224,7 @@ MUSSolver::MUSSolver(Wcnf& f, BaseSolver *psolver) :
 {
     theWcnf.setSolver(this);
     std::string alg { (const char*)opt_alg };
-    if( alg == "delete" )
+    if( alg == "delete") 
         algorithm = ALG_DELETE;
     else if( alg == "mishmash" )
         algorithm = ALG_MISHMASH;
@@ -444,10 +444,17 @@ auto MUSSolver::satsolve(Solver& thesolver, solve_type st) -> lbool
     prevConflicts = thesolver.getStats().conflicts;
     lbool val = thesolver.solve();
     recordSolve(thesolver, val, st);
-    if( val != l_True )
+    if( val != l_True ){
         thesolver.cancelUntil(0);
-    else
+    }
+    else{
         mcs_witness = thesolver.model();
+        if(mcsmus_store_models){
+            model_t external_model;
+            in2ex(mcs_witness, external_model);
+            mcsmus_models.push_back(external_model);
+        }
+    }
     return val;
 }
 
@@ -639,7 +646,6 @@ bool MUSSolver::mus_delete(vector<Lit>& conflict, vector<Lit> const& /*all*/,
   //reduce conflict to a MUS, return true if we succeeded.
   //don't use more than probBudget props to do so.
   bool isMus {true};
-
   solver->setPropagationBudget( (propBudget < 0) ? -1
                                 : solver->getStats().propagations + propBudget );
 

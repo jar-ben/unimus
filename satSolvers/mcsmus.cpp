@@ -45,12 +45,16 @@ std::vector<Lit> intToLit(std::vector<int> cls){
 }
 
 std::vector<bool> BooleanSolver::shrink_mcsmus(std::vector<bool> &f, std::vector<bool> crits){
+    std::vector<std::vector<bool>> models;
+    return shrink_mcsmus(f, models, crits);
+}
+
+std::vector<bool> BooleanSolver::shrink_mcsmus(std::vector<bool> &f, std::vector<std::vector<bool>> &models, std::vector<bool> crits){
 	setX86FPUPrecision();
 	Wcnf wcnf;
 	std::unique_ptr<BaseSolver> s;
 	s = make_glucose_simp_solver();
 	MUSSolver mussolver(wcnf, s.get());
-
 	
 	Control* control = getGlobalControl();;
 	control->verbosity = 0;
@@ -80,6 +84,9 @@ std::vector<bool> BooleanSolver::shrink_mcsmus(std::vector<bool> &f, std::vector
 		}
 	}
 
+    //possibly memorize models identified by mcsmus (in Master, we then build model extensions and block them from unexplored)
+    mussolver.mcsmus_store_models = shrinkStoreModels;
+
 	//add the blocks from Explorer
 	if(shrinkMining){
 		mussolver.conflictMining = true;
@@ -105,6 +112,15 @@ std::vector<bool> BooleanSolver::shrink_mcsmus(std::vector<bool> &f, std::vector
 	mussolver.find_mus(mus_lits, false);
 	
 	shrinkMinedCrits += mussolver.minedCriticals;
+
+    for(auto m: mussolver.mcsmus_models){
+        vector<bool> m2;
+        for(int i = 0; i < m.size(); i++){
+            m2.push_back(m[i] == l_True);
+        }
+        models.push_back(m2);
+    }
+    std::cout << "mcsmus models: " << models.size() << std::endl;
 
 	std::vector<bool> mus(f.size(), false);
 	for(auto b : mus_lits){

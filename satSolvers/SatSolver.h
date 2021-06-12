@@ -26,6 +26,7 @@ public:
 	Explorer *explorer;
 	int shrinkMinedCrits;
 	bool shrinkMining;
+    bool shrinkStoreModels;
 	bool DBG;
 
 	SatSolver(std::string filename): shrink_alg("default"), 
@@ -34,6 +35,7 @@ public:
 	virtual std::string toString(std::vector<bool> &mus) = 0;
 	virtual bool solve(std::vector<bool> &f, bool core = false, bool grow = false) = 0;
 	virtual bool solve(std::vector<bool> &f, std::vector<int> conflicts, bool core = false, bool grow = false);
+	virtual std::vector<bool> shrink(std::vector<bool> &f, std::vector<std::vector<bool>> &models, std::vector<bool> crits = std::vector<bool>());
 	virtual std::vector<bool> shrink(std::vector<bool> &f, std::vector<bool> crits = std::vector<bool>());
 	virtual std::vector<bool> shrink(std::vector<bool> &f, Explorer *e, std::vector<bool> crits = std::vector<bool>());
 

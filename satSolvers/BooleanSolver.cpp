@@ -302,9 +302,14 @@ int BooleanSolver::critical_propagation(vector<bool> &f, vector<bool> &crits, in
 	return extensions - 1; //exclude the initical clause cl
 }
 
+vector<bool> BooleanSolver::shrink(std::vector<bool> &f, std::vector<bool> crits){
+    std::vector<std::vector<bool>> models;
+    return shrink(f, models, crits);
+}
+
 // implementation of the shrinking procedure
 // based on the value of basic_shrink employes either muser2 or dmuser
-vector<bool> BooleanSolver::shrink(std::vector<bool> &f, std::vector<bool> crits){
+vector<bool> BooleanSolver::shrink(std::vector<bool> &f, std::vector<std::vector<bool>> &models, std::vector<bool> crits){
         shrinks++;
 	if(crits.empty())
 		crits = std::vector<bool> (dimension, false);
@@ -329,7 +334,7 @@ vector<bool> BooleanSolver::shrink(std::vector<bool> &f, std::vector<bool> crits
         if(shrink_alg == "default"){
 		vector<bool> mus;
                 try{
-                        mus = shrink_mcsmus(f, crits);
+                        mus = shrink_mcsmus(f, models, crits);
                 } catch (...){
                         //mcsmus sometimes fails so we use muser instead
                         cout << "mcsmus crashed during shrinking, using muser2 instead" << endl;

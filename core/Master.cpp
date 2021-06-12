@@ -68,7 +68,7 @@ void Master::block_up(Formula formula){
 
 // mark formula and all of its subsets as explored
 void Master::block_down(Formula formula){
-        explorer->block_down(formula);
+    explorer->block_down(formula);
 }
 
 // check formula for satisfiability
@@ -180,7 +180,7 @@ MUS& Master::shrink_formula(Formula &f, Formula crits){
 			muses.push_back(MUS(f, -1, muses.size(), f_size)); //-1 duration means skipped shrink
 			return muses.back();
 		}
-		if((f_size - c_crits < 3) && !is_valid(crits, false, false)){		
+		if(false && (f_size - c_crits < 3) && !is_valid(crits, false, false)){		
 		//if(!is_valid(crits, false, false)){		
 			muses.push_back(MUS(crits, -1, muses.size(), f_size));//-1 duration means skipped shrink
 			if(verbose >= 4)  cout << "crits are unsat on themself" << endl;
@@ -200,8 +200,34 @@ MUS& Master::shrink_formula(Formula &f, Formula crits){
 			}
 		}
 	}	
-	
-	Formula mus = satSolver->shrink(f, crits);
+
+    Formula mus;
+    if(false)
+        mus = satSolver->shrink(f, crits);
+    else{
+        vector<vector<bool>> models;
+        mus = satSolver->shrink(f, models, crits);
+	    BooleanSolver *msSolver = static_cast<BooleanSolver*>(satSolver);
+        for(auto &m: models){
+            vector<int> valuation;
+            for(int i = 0; i < m.size(); i++){
+                if(i == msSolver->vars) break; //the model from mcsmus can be larger as it uses some additional, auxiliary variables
+                if(m[i]) valuation.push_back(i + 1);
+                else valuation.push_back(-1 * (i + 1));
+            }
+
+            //extend model if it is partial
+            for(int i = m.size(); i < msSolver->vars; i++){
+                valuation.push_back(i + 1);
+            }
+            Formula extension = msSolver->satisfied(valuation);
+            block_down(extension);
+            int misses = 0;
+            for(int i = 0; i < dimension; i++){
+                if(mus[i] && !extension[i]) misses++;
+            }
+        }
+    }
 	chrono::high_resolution_clock::time_point end_time = chrono::high_resolution_clock::now();
 	auto duration = chrono::duration_cast<chrono::microseconds>( end_time - start_time ).count() / float(1000000);
 	muses.push_back(MUS(mus, duration, muses.size(), f_size));

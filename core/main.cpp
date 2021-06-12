@@ -42,6 +42,7 @@ int main(int argc, char *argv[]){
 		cmd.add(verbose);
         TCLAP::SwitchArg dbg("","dbg","Debugging mode", cmd, false);
 		TCLAP::SwitchArg shrinkMining("","shrink-mining","Allows mcsmus to mine critical clauses from Explorer.", cmd, false);
+		TCLAP::SwitchArg shrinkStoreModels("","shrink-store-models","Store models identified during shrinking, then build model extensions to prune unexplored.", cmd, false);
 		vector<string> allowedShrinks {"default", "muser", "custom", "extension"};
 		TCLAP::ValuesConstraint<string> allowedValsShrink(allowedShrinks);
 		TCLAP::ValueArg<std::string> shrink("s","shrink","Specifies the shrinking algorithm (single MUS extraction subroutine). The default is implemented via mcsmus",false,"default",&allowedValsShrink);
@@ -88,6 +89,7 @@ int main(int argc, char *argv[]){
 		solver.criticals_rotation = criticalsRotation.getValue(); //criticals_rotation;
 		solver.satSolver->mcslsArgs = mcslsArgs.getValue();
 		solver.satSolver->shrinkMining = shrinkMining.getValue();
+        solver.satSolver->shrinkStoreModels = shrinkStoreModels.getValue();
 		solver.mss_rotation = mssRotation.getValue();
 		solver.mssRotationLimit = (mssRotationLimit.getValue() >= 0)? mssRotationLimit.getValue() : 1000000;
 		solver.DBG = dbg.getValue();

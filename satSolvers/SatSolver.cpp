@@ -8,6 +8,10 @@ bool SatSolver::solve(std::vector<bool> &f, std::vector<int> conflicts, bool cor
 	return solve(f, core, grow);
 }
 
+vector<bool> SatSolver::shrink(std::vector<bool> &f, std::vector<std::vector<bool>> &models, std::vector<bool> crits){
+    return shrink(f, crits);
+}
+
 //basic, domain agnostic, implementation of the shrink procedure
 vector<bool> SatSolver::shrink(std::vector<bool> &f, std::vector<bool> crits){
 	shrinks++;
